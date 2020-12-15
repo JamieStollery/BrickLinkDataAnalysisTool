@@ -17,5 +17,7 @@ namespace GUI.View.Stage
         public void OpenStage() => ShowDialog();
 
         public void CloseStage() => Close();
+
+        public void AddView(IView view) => Controls.Add(view as Control);
     }
 }

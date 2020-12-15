@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using Autofac.Core;
+using GUI.View;
 using GUI.View.Stage;
+using Presentation.Presenter.Login;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
 using System;
@@ -25,6 +27,10 @@ namespace GUI
                 var cc = context.Resolve<IComponentContext>();
                 return () => cc.ResolveKeyed<IStagePresenter>(StageKey.Child);
             });
+
+            // Register login View/Presenter
+            builder.RegisterType<LoginView>().As<ILoginView>();
+            builder.RegisterType<LoginPresenter>().As<ILoginPresenter>();
         }
     }
 }

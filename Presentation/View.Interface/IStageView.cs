@@ -7,5 +7,6 @@ namespace Presentation.View.Interface
         Action OnOpened { set; }
         void OpenStage();
         void CloseStage();
+        void AddView(IView view);
     }
 }

@@ -12,6 +12,8 @@ namespace Presentation.Presenter.Stage
 
         public void OpenStage() => View.OpenStage();
 
+        public void CloseStage() => View.CloseStage();
+
         protected readonly IStageView View;
 
         protected abstract void InitializeStage();

@@ -15,6 +15,7 @@ namespace Presentation.Presenter.Stage
         protected override void InitializeStage()
         {
             // Initialize Stage
+            _stagePresenterFactory().OpenStage();
         }
     }
 }
