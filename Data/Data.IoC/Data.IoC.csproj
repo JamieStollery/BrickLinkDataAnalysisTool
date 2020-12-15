@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Data.BrickLinkAPI\Data.BrickLinkAPI.csproj" />
     <ProjectReference Include="..\Data.LocalDB\Data.LocalDB.csproj" />
   </ItemGroup>
