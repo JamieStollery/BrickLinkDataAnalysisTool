@@ -9,14 +9,12 @@ using Presentation.View.Interface;
 
 namespace GUI.View
 {
-    public partial class LoginView : UserControl, ILoginView
+    public partial class RegisterView : UserControl, IRegisterView
     {
-        public LoginView()
+        public RegisterView()
         {
             InitializeComponent();
         }
-
-        public Action OnLoginButtonClick { set => btnLogin.Click += (sender, e) => value(); }
 
         public Action OnRegisterButtonClick { set => btnRegister.Click += (sender, e) => value(); }
     }

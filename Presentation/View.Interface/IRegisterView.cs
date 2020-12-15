@@ -2,9 +2,8 @@
 
 namespace Presentation.View.Interface
 {
-    public interface ILoginView : IView
+    public interface IRegisterView : IView
     {
-        Action OnLoginButtonClick { set; }
         Action OnRegisterButtonClick { set; }
     }
 }

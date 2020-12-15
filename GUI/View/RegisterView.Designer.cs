@@ -1,6 +1,6 @@
 ﻿namespace GUI.View
 {
-    partial class LoginView
+    partial class RegisterView
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,42 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnLogin = new System.Windows.Forms.Button();
             this.btnRegister = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // btnLogin
-            // 
-            this.btnLogin.Location = new System.Drawing.Point(0, 0);
-            this.btnLogin.Name = "btnLogin";
-            this.btnLogin.Size = new System.Drawing.Size(68, 43);
-            this.btnLogin.TabIndex = 0;
-            this.btnLogin.Text = "Login";
-            this.btnLogin.UseVisualStyleBackColor = true;
-            // 
             // btnRegister
             // 
-            this.btnRegister.Location = new System.Drawing.Point(74, 0);
+            this.btnRegister.Location = new System.Drawing.Point(0, 0);
             this.btnRegister.Name = "btnRegister";
-            this.btnRegister.Size = new System.Drawing.Size(68, 43);
+            this.btnRegister.Size = new System.Drawing.Size(84, 49);
             this.btnRegister.TabIndex = 0;
             this.btnRegister.Text = "Register";
             this.btnRegister.UseVisualStyleBackColor = true;
             // 
-            // LoginView
+            // RegisterView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnRegister);
-            this.Controls.Add(this.btnLogin);
-            this.Name = "LoginView";
+            this.Name = "RegisterView";
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnLogin;
         private System.Windows.Forms.Button btnRegister;
     }
 }

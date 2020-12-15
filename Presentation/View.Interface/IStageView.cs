@@ -8,5 +8,6 @@ namespace Presentation.View.Interface
         void OpenStage();
         void CloseStage();
         void AddView(IView view);
+        void RemoveView(IView view);
     }
 }

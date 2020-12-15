@@ -19,5 +19,7 @@ namespace GUI.View.Stage
         public void CloseStage() => Close();
 
         public void AddView(IView view) => Controls.Add(view as Control);
+
+        public void RemoveView(IView view) => Controls.Remove(view as Control);
     }
 }

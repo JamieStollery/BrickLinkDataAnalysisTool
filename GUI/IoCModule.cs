@@ -3,6 +3,7 @@ using Autofac.Core;
 using GUI.View;
 using GUI.View.Stage;
 using Presentation.Presenter.Login;
+using Presentation.Presenter.Register;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
 using System;
@@ -31,6 +32,10 @@ namespace GUI
             // Register login View/Presenter
             builder.RegisterType<LoginView>().As<ILoginView>();
             builder.RegisterType<LoginPresenter>().As<ILoginPresenter>();
+
+            // Register register View/Presenter
+            builder.RegisterType<RegisterView>().As<IRegisterView>();
+            builder.RegisterType<RegisterPresenter>().As<IRegisterPresenter>();
         }
     }
 }
