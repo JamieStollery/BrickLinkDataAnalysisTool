@@ -2,6 +2,7 @@
 using Autofac.Core;
 using GUI.View;
 using GUI.View.Stage;
+using Presentation;
 using Presentation.Presenter.Login;
 using Presentation.Presenter.Register;
 using Presentation.Presenter.Stage;
@@ -23,10 +24,10 @@ namespace GUI
             builder.RegisterType<ChildStagePresenter>().As<IStagePresenter>().Keyed<IStagePresenter>(StageKey.Child).WithParameter(ResolvedParameter.ForKeyed<IStageView>(StageKey.Child));
 
             // Register a stage Presenter factory that returns a child stage Presenter
-            builder.Register<Func<IStagePresenter>>(context =>
+            builder.Register<Func<ChildStageViewType, IStagePresenter>>(context =>
             {
                 var cc = context.Resolve<IComponentContext>();
-                return () => cc.ResolveKeyed<IStagePresenter>(StageKey.Child);
+                return initialView => cc.ResolveKeyed<IStagePresenter>(StageKey.Child, TypedParameter.From(initialView));
             });
 
             // Register login View/Presenter

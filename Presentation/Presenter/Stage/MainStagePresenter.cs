@@ -5,9 +5,9 @@ namespace Presentation.Presenter.Stage
 {
     public class MainStagePresenter : StagePresenterBase
     {
-        private Func<IStagePresenter> _stagePresenterFactory;
+        private Func<ChildStageViewType, IStagePresenter> _stagePresenterFactory;
 
-        public MainStagePresenter(IStageView view, Func<IStagePresenter> stagePresenterFactory) : base(view)
+        public MainStagePresenter(IStageView view, Func<ChildStageViewType, IStagePresenter> stagePresenterFactory) : base(view)
         {
             _stagePresenterFactory = stagePresenterFactory;
         }
@@ -15,7 +15,7 @@ namespace Presentation.Presenter.Stage
         protected override void InitializeStage()
         {
             // Initialize Stage
-            _stagePresenterFactory().OpenStage();
+            _stagePresenterFactory(ChildStageViewType.Login).OpenStage();
         }
     }
 }

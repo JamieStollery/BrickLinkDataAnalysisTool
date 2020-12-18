@@ -9,17 +9,27 @@ namespace Presentation.Presenter.Stage
     {
         private readonly Func<ILoginPresenter> _loginPresenterFactory;
         private readonly Func<IRegisterPresenter> _registerPresenterFactory;
+        private readonly ChildStageViewType _initialView;
 
-        public ChildStagePresenter(IStageView view, Func<ILoginPresenter> loginPresenterFactory, Func<IRegisterPresenter> registerPresenterFactory) : base(view)
+        public ChildStagePresenter(IStageView view, Func<ILoginPresenter> loginPresenterFactory, Func<IRegisterPresenter> registerPresenterFactory, ChildStageViewType initialView) : base(view)
         {
             _loginPresenterFactory = loginPresenterFactory;
             _registerPresenterFactory = registerPresenterFactory;
+            _initialView = initialView;
         }
 
         protected override void InitializeStage()
         {
             // Initialize Stage
-            OpenLoginView();
+            switch (_initialView)
+            {
+                case ChildStageViewType.Login:
+                    OpenLoginView();
+                    break;
+                case ChildStageViewType.Register:
+                    OpenRegisterView();
+                    break;
+            }
         }
 
         private void OpenLoginView()
