@@ -18,7 +18,7 @@ namespace GUI.View.Stage
 
         public void CloseStage() => Close();
 
-        public void AddView(IView view) => Controls.Add(view as Control);
+        public void AddView(IView view) => (view is IMenuView ? Controls : pnlViewStage.Controls).Add(view as Control);
 
         public void RemoveView(IView view) => Controls.Remove(view as Control);
     }

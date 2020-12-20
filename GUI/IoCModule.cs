@@ -4,6 +4,7 @@ using GUI.View;
 using GUI.View.Stage;
 using Presentation;
 using Presentation.Presenter.Login;
+using Presentation.Presenter.Menu;
 using Presentation.Presenter.Register;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
@@ -37,6 +38,10 @@ namespace GUI
             // Register register View/Presenter
             builder.RegisterType<RegisterView>().As<IRegisterView>();
             builder.RegisterType<RegisterPresenter>().As<IRegisterPresenter>();
+
+            // Register menu View/Presenter
+            builder.RegisterType<MenuView>().As<IMenuView>();
+            builder.RegisterType<MenuPresenter>().As<IMenuPresenter>();
         }
     }
 }
