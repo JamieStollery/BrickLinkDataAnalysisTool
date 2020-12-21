@@ -2,19 +2,23 @@
 
 namespace Presentation.Presenter.Stage
 {
-    public abstract class StagePresenterBase : IStagePresenter
+    public abstract class StagePresenterBase
     {
+        private readonly IStageView _view;
+
         protected StagePresenterBase(IStageView view)
         {
-            View = view;
-            View.OnOpened = () => InitializeStage();
+            _view = view;
+            _view.OnOpened = () => InitializeStage();
         }
 
-        public void OpenStage() => View.OpenStage();
+        public void OpenStage() => _view.OpenStage();
 
-        public void CloseStage() => View.CloseStage();
+        public void CloseStage() => _view.CloseStage();
 
-        protected readonly IStageView View;
+        public void CloseView(IView view) => _view.RemoveView(view);
+
+        public void OpenView(IView view) => _view.AddView(view);
 
         protected abstract void InitializeStage();
     }

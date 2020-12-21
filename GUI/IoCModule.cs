@@ -3,9 +3,7 @@ using Autofac.Core;
 using GUI.View;
 using GUI.View.Stage;
 using Presentation;
-using Presentation.Presenter.Login;
-using Presentation.Presenter.Menu;
-using Presentation.Presenter.Register;
+using Presentation.Presenter;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
 using System;
@@ -17,31 +15,37 @@ namespace GUI
         protected override void Load(ContainerBuilder builder)
         {
             // Register main View/Presenter keyed with StageKey.Main
-            builder.RegisterType<MainStageView>().As<IStageView>().Keyed<IStageView>(StageKey.Main);
-            builder.RegisterType<MainStagePresenter>().As<IStagePresenter>().Keyed<IStagePresenter>(StageKey.Main).WithParameter(ResolvedParameter.ForKeyed<IStageView>(StageKey.Main));
+            builder.RegisterType<MainStageView>().As<IStageView>().Keyed<IStageView>(StageKey.Main).InstancePerLifetimeScope();
+            builder.RegisterType<MainStagePresenter>().WithParameter(ResolvedParameter.ForKeyed<IStageView>(StageKey.Main)).InstancePerLifetimeScope();
 
             // Register child View/Presenter keyed with StageKey.Child
-            builder.RegisterType<ChildStageView>().As<IStageView>().Keyed<IStageView>(StageKey.Child);
-            builder.RegisterType<ChildStagePresenter>().As<IStagePresenter>().Keyed<IStagePresenter>(StageKey.Child).WithParameter(ResolvedParameter.ForKeyed<IStageView>(StageKey.Child));
+            builder.RegisterType<ChildStageView>().As<IStageView>().Keyed<IStageView>(StageKey.Child).InstancePerLifetimeScope();
+            builder.RegisterType<ChildStagePresenter>().WithParameter(ResolvedParameter.ForKeyed<IStageView>(StageKey.Child)).InstancePerLifetimeScope();
 
-            // Register a stage Presenter factory that returns a child stage Presenter
-            builder.Register<Func<ChildStageViewType, IStagePresenter>>(context =>
+            // Register a child stage Presenter factory that returns a child stage Presenter with the InitialView property set
+            builder.Register<Func<ChildStageViewType, ChildStagePresenter>>(context =>
             {
                 var cc = context.Resolve<IComponentContext>();
-                return initialView => cc.ResolveKeyed<IStagePresenter>(StageKey.Child, TypedParameter.From(initialView));
+                return initialView =>
+                {
+                    var presenter = cc.Resolve<ChildStagePresenter>();
+                    presenter.InitialView = initialView;
+                    return presenter;
+                };
             });
 
             // Register login View/Presenter
             builder.RegisterType<LoginView>().As<ILoginView>();
-            builder.RegisterType<LoginPresenter>().As<ILoginPresenter>();
+            builder.RegisterType<LoginPresenter>();
 
             // Register register View/Presenter
             builder.RegisterType<RegisterView>().As<IRegisterView>();
-            builder.RegisterType<RegisterPresenter>().As<IRegisterPresenter>();
+            builder.RegisterType<RegisterPresenter>();
 
             // Register menu View/Presenter
             builder.RegisterType<MenuView>().As<IMenuView>();
-            builder.RegisterType<MenuPresenter>().As<IMenuPresenter>();
+            builder.RegisterType<MenuPresenter>();
+
         }
     }
 }

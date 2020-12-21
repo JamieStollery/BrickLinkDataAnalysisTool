@@ -1,27 +1,29 @@
-﻿using Presentation.Presenter.Login;
-using Presentation.Presenter.Register;
-using Presentation.View.Interface;
+﻿using Presentation.View.Interface;
 using System;
 
 namespace Presentation.Presenter.Stage
 {
     public class ChildStagePresenter : StagePresenterBase
     {
-        private readonly Func<ILoginPresenter> _loginPresenterFactory;
-        private readonly Func<IRegisterPresenter> _registerPresenterFactory;
-        private readonly ChildStageViewType _initialView;
+        private readonly Func<LoginPresenter> _loginPresenterFactory;
+        private readonly Func<RegisterPresenter> _registerPresenterFactory;
 
-        public ChildStagePresenter(IStageView view, Func<ILoginPresenter> loginPresenterFactory, Func<IRegisterPresenter> registerPresenterFactory, ChildStageViewType initialView) : base(view)
+        public ChildStagePresenter(IStageView view, Func<LoginPresenter> loginPresenterFactory, Func<RegisterPresenter> registerPresenterFactory) : base(view)
         {
             _loginPresenterFactory = loginPresenterFactory;
             _registerPresenterFactory = registerPresenterFactory;
-            _initialView = initialView;
         }
+
+        public ChildStageViewType InitialView { private get; set; }
+
+        public void OpenLoginView() => _loginPresenterFactory().OpenView();
+
+        public void OpenRegisterView() => _registerPresenterFactory().OpenView();
 
         protected override void InitializeStage()
         {
             // Initialize Stage
-            switch (_initialView)
+            switch (InitialView)
             {
                 case ChildStageViewType.Login:
                     OpenLoginView();
@@ -30,35 +32,6 @@ namespace Presentation.Presenter.Stage
                     OpenRegisterView();
                     break;
             }
-        }
-
-        private void OpenLoginView()
-        {
-            var presenter = CreateLoginPresenter();
-            View.AddView(presenter.View);
-        }
-
-        private void OpenRegisterView()
-        {
-            var presenter = CreateRegisterPresenter();
-            View.AddView(presenter.View);
-        }
-
-        private ILoginPresenter CreateLoginPresenter()
-        {
-            var presenter = _loginPresenterFactory();
-            presenter.CloseView = (view) => View.RemoveView(view);
-            presenter.OpenRegisterView = () => OpenRegisterView();
-            presenter.CloseStage = () => CloseStage();
-            return presenter;
-        }
-
-        private IRegisterPresenter CreateRegisterPresenter()
-        {
-            var presenter = _registerPresenterFactory();
-            presenter.CloseView = (view) => View.RemoveView(view);
-            presenter.OpenLoginView = () => OpenLoginView();
-            return presenter;
         }
     }
 }

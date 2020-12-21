@@ -1,27 +1,33 @@
-﻿using Presentation.Presenter.Menu;
-using Presentation.View.Interface;
+﻿using Presentation.View.Interface;
 using System;
 
 namespace Presentation.Presenter.Stage
 {
     public class MainStagePresenter : StagePresenterBase
     {
-        private readonly Func<ChildStageViewType, IStagePresenter> _stagePresenterFactory;
-        private readonly IMenuPresenter _menuPresenter;
+        private readonly Func<ChildStageViewType, ChildStagePresenter> _stagePresenterFactory;
+        private readonly Func<MenuPresenter> _menuPresenterFactory;
 
-        public MainStagePresenter(IStageView view, IMenuPresenter menuPresenter, Func<ChildStageViewType, IStagePresenter> stagePresenterFactory) : base(view)
+        public MainStagePresenter(IStageView view, Func<MenuPresenter> menuPresenterFactory, Func<ChildStageViewType, ChildStagePresenter> stagePresenterFactory) : base(view)
         {
             _stagePresenterFactory = stagePresenterFactory;
-            _menuPresenter = menuPresenter;
-            _menuPresenter.OpenLoginView = () => _stagePresenterFactory(ChildStageViewType.Login).OpenStage();
-            _menuPresenter.OpenRegisterView = () => _stagePresenterFactory(ChildStageViewType.Register).OpenStage();
+            _menuPresenterFactory = menuPresenterFactory;
+        }
+
+        public void OpenLoginView() => _stagePresenterFactory(ChildStageViewType.Login).OpenStage();
+
+        public void OpenRegisterView() => _stagePresenterFactory(ChildStageViewType.Register).OpenStage();
+
+        public void OpenOrderView()
+        {
+            throw new NotImplementedException();
         }
 
         protected override void InitializeStage()        
         {
             // Initialize Stage
-            View.AddView(_menuPresenter.View);
-            _stagePresenterFactory(ChildStageViewType.Login).OpenStage();
+            _menuPresenterFactory().OpenView();
+            OpenLoginView();
         }
     }
 }

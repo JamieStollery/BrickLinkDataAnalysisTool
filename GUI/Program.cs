@@ -30,7 +30,7 @@ namespace GUI
             using(var scope = container.BeginLifetimeScope())
             {
                 // Resolve main stage presenter
-                var presenter = scope.ResolveKeyed<IStagePresenter>(StageKey.Main);
+                var presenter = scope.Resolve<MainStagePresenter>();
 
                 // Open main stage
                 presenter.OpenStage();
