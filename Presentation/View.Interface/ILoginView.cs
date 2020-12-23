@@ -6,5 +6,8 @@ namespace Presentation.View.Interface
     {
         Action OnLoginButtonClick { set; }
         Action OnRegisterButtonClick { set; }
+        string Username { get; }
+        string Password { get; }
+        string Error { set; }
     }
 }

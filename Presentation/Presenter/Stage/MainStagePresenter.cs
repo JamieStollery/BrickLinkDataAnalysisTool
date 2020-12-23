@@ -1,17 +1,25 @@
-﻿using Presentation.View.Interface;
+﻿using Data.Common;
+using Presentation.View.Interface;
 using System;
 
 namespace Presentation.Presenter.Stage
 {
     public class MainStagePresenter : StagePresenterBase
     {
+        private readonly IMainStageView _view;
+        private readonly User _user;
         private readonly Func<ChildStageViewType, ChildStagePresenter> _stagePresenterFactory;
-        private readonly Func<MenuPresenter> _menuPresenterFactory;
 
-        public MainStagePresenter(IStageView view, Func<MenuPresenter> menuPresenterFactory, Func<ChildStageViewType, ChildStagePresenter> stagePresenterFactory) : base(view)
+        public MainStagePresenter(IMainStageView view, User user, Func<ChildStageViewType, ChildStagePresenter> stagePresenterFactory) : base(view)
         {
+            _view = view;
+            _user = user;
             _stagePresenterFactory = stagePresenterFactory;
-            _menuPresenterFactory = menuPresenterFactory;
+
+            _view.OnStageGotFocus = () => UpdateControls();
+            _view.OnLogoutClick = () => Logout();
+            _view.OnLoginClick = () => OpenLoginView();
+            _view.OnRegisterClick = () => OpenRegisterView();
         }
 
         public void OpenLoginView() => _stagePresenterFactory(ChildStageViewType.Login).OpenStage();
@@ -26,8 +34,20 @@ namespace Presentation.Presenter.Stage
         protected override void InitializeStage()        
         {
             // Initialize Stage
-            _menuPresenterFactory().OpenView();
             OpenLoginView();
+        }
+
+        private void UpdateControls()
+        {
+            _view.Username = _user.Username;
+            _view.LogoutEnabled = _user.IsLoggedIn;
+            _view.LoginEnabled = !_user.IsLoggedIn;
+            _view.RegisterEnabled = !_user.IsLoggedIn;
+        }
+        private void Logout()
+        {
+            _user.Logout();
+            UpdateControls();
         }
     }
 }

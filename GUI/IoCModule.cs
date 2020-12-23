@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Autofac.Core;
+using Data.Common;
+using Data.IoC;
 using GUI.View;
 using GUI.View.Stage;
 using Presentation;
@@ -14,9 +16,12 @@ namespace GUI
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterModule<IoCDataModule>();
+            builder.RegisterType<User>().SingleInstance();
+
             // Register main View/Presenter keyed with StageKey.Main
-            builder.RegisterType<MainStageView>().As<IStageView>().Keyed<IStageView>(StageKey.Main).InstancePerLifetimeScope();
-            builder.RegisterType<MainStagePresenter>().WithParameter(ResolvedParameter.ForKeyed<IStageView>(StageKey.Main)).InstancePerLifetimeScope();
+            builder.RegisterType<MainStageView>().As<IMainStageView>().Keyed<IStageView>(StageKey.Main).InstancePerLifetimeScope();
+            builder.RegisterType<MainStagePresenter>().WithParameter(ResolvedParameter.ForKeyed<IMainStageView>(StageKey.Main)).InstancePerLifetimeScope();
 
             // Register child View/Presenter keyed with StageKey.Child
             builder.RegisterType<ChildStageView>().As<IStageView>().Keyed<IStageView>(StageKey.Child).InstancePerLifetimeScope();
@@ -41,10 +46,6 @@ namespace GUI
             // Register register View/Presenter
             builder.RegisterType<RegisterView>().As<IRegisterView>();
             builder.RegisterType<RegisterPresenter>();
-
-            // Register menu View/Presenter
-            builder.RegisterType<MenuView>().As<IMenuView>();
-            builder.RegisterType<MenuPresenter>();
 
         }
     }
