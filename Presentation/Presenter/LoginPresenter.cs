@@ -7,10 +7,10 @@ namespace Presentation.Presenter
 {
     public class LoginPresenter : PresenterBase<ILoginView, ChildStagePresenter>
     {
-        private readonly UserRepository _loginRepository;
+        private readonly LoginRepository _loginRepository;
         private readonly User _user;
 
-        public LoginPresenter(ILoginView view, ChildStagePresenter stagePresenter, UserRepository loginRepository, User user) : base(view, stagePresenter)
+        public LoginPresenter(ILoginView view, ChildStagePresenter stagePresenter, LoginRepository loginRepository, User user) : base(view, stagePresenter)
         {
             _loginRepository = loginRepository;
             _user = user;
@@ -28,7 +28,7 @@ namespace Presentation.Presenter
                 return;
             }
 
-            if (!await _loginRepository.Login(View.Username))
+            if (!await _loginRepository.Login(View.Username, View.Password))
             {
                 View.Error = "Invalid username or password";
             }

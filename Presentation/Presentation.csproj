@@ -8,4 +8,8 @@
     <ProjectReference Include="..\Data\Data.IoC\Data.IoC.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Model.Validation\" />
+  </ItemGroup>
+
 </Project>

@@ -13,7 +13,8 @@ namespace Data.IoC
         {
             var connectionString = $"Data Source={Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Users.db3")};Version=3;";
             builder.RegisterInstance<IDbConnection>(new SQLiteConnection(connectionString));
-            builder.RegisterType<UserRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<LoginRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<RegisterRepository>().InstancePerLifetimeScope();
         }
     }
 }
