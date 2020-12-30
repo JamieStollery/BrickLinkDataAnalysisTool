@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Data.Common.Model;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -13,14 +14,14 @@ namespace Data.LocalDB
             _connection = connection;
         }
 
-        public async Task<bool> Login(string username, string password)
+        public async Task<bool> Login(User user)
         {
             var sql = @"SELECT COUNT(1) 
                         FROM Users
-                        WHERE Username = @username
-                        AND Password = @password";
+                        WHERE Username = @Username
+                        AND Password = @Password";
 
-            return await _connection.QuerySingleAsync<bool>(sql, new { username, password });
+            return await _connection.QuerySingleAsync<bool>(sql, new { user.Username, user.Password });
         } 
     }
 }

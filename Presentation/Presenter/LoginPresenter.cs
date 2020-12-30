@@ -1,7 +1,9 @@
-﻿using Data.Common;
+﻿using Data.Common.Model;
+using Data.Common.Model.Validation;
 using Data.LocalDB;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
+using System.Linq;
 
 namespace Presentation.Presenter
 {
@@ -21,24 +23,27 @@ namespace Presentation.Presenter
 
         private async void Login()
         {
-            // Login
-            if (string.IsNullOrWhiteSpace(View.Username) || string.IsNullOrWhiteSpace(View.Password))
+            _user.Username = View.Username;
+            _user.Password = View.Password;
+
+            var result = _user.Validate(UserValidationType.Login);
+
+            if(!result.IsValid)
             {
-                View.Error = "All fields must contain a value";
+                _user.Invalidate();
+                View.Error = result.Errors.First().ErrorMessage;
                 return;
             }
 
-            if (!await _loginRepository.Login(View.Username, View.Password))
+            if (!await _loginRepository.Login(_user))
             {
+                _user.Invalidate();
                 View.Error = "Invalid username or password";
+                return;
             }
-            else
-            {
-                _user.Username = View.Username;
 
-                StagePresenter.CloseView(View);
-                StagePresenter.CloseStage();
-            }
+            StagePresenter.CloseView(View);
+            StagePresenter.CloseStage();
         }
 
         private void OpenRegisterView()

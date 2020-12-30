@@ -1,4 +1,6 @@
 ﻿using Dapper;
+using Data.Common.Model;
+using System;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -13,12 +15,19 @@ namespace Data.LocalDB
             _connection = connection;
         }
 
-        public async Task Register(string username, string password, string consumerKey, string consumerSecret, string tokenValue, string tokenSecret)
+        public async Task<bool> Register(User user)
         {
             var sql = @"INSERT INTO Users
-                        VALUES(@username, @password, @consumerKey, @consumerSecret, @tokenValue, @tokenSecret)";
-
-            await _connection.ExecuteAsync(sql, new { username, password, consumerKey, consumerSecret, tokenValue, tokenSecret });
+                        VALUES(@Username, @Password, @ConsumerKey, @ConsumerSecret, @TokenValue, @TokenSecret)";
+            try
+            {
+                await _connection.ExecuteAsync(sql, new { user.Username, user.Password, user.ConsumerKey, user.ConsumerSecret, user.TokenValue, user.TokenSecret });
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Autofac;
 using Autofac.Core;
-using Data.Common;
+using Data.Common.Model;
+using Data.Common.Model.Validation;
 using Data.IoC;
+using FluentValidation;
 using GUI.View;
 using GUI.View.Stage;
 using Presentation;
@@ -17,7 +19,6 @@ namespace GUI
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterModule<IoCDataModule>();
-            builder.RegisterType<User>().SingleInstance();
 
             // Register main View/Presenter keyed with StageKey.Main
             builder.RegisterType<MainStageView>().As<IMainStageView>().Keyed<IStageView>(StageKey.Main).InstancePerLifetimeScope();

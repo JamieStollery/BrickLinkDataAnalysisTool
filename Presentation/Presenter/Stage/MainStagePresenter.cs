@@ -1,4 +1,4 @@
-﻿using Data.Common;
+﻿using Data.Common.Model;
 using Presentation.View.Interface;
 using System;
 
@@ -46,7 +46,7 @@ namespace Presentation.Presenter.Stage
         }
         private void Logout()
         {
-            _user.Logout();
+            _user.Invalidate();
             UpdateControls();
         }
     }
