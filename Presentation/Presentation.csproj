@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Data\Data.IoC\Data.IoC.csproj" />
+    <Compile Remove="Model.Validation\**" />
+    <EmbeddedResource Remove="Model.Validation\**" />
+    <None Remove="Model.Validation\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Model.Validation\" />
+    <ProjectReference Include="..\Data\Data.IoC\Data.IoC.csproj" />
   </ItemGroup>
 
 </Project>

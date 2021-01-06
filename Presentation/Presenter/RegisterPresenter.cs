@@ -7,47 +7,53 @@ using System.Linq;
 
 namespace Presentation.Presenter
 {
-    public class RegisterPresenter : PresenterBase<IRegisterView, ChildStagePresenter>
+    public class RegisterPresenter : IPresenter
     {
+        private readonly IRegisterView _view; 
+        private readonly ChildStagePresenter _stagePresenter;
         private readonly RegisterRepository _registerRepository;
         private readonly User _user;
 
-        public RegisterPresenter(IRegisterView view, ChildStagePresenter stagePresenter, RegisterRepository registerRepository, User user) : base(view, stagePresenter)
+        public RegisterPresenter(IRegisterView view, ChildStagePresenter stagePresenter, RegisterRepository registerRepository, User user)
         {
+            _view = view;
+            _stagePresenter = stagePresenter;
             _registerRepository = registerRepository;
             _user = user;
 
-            View.OnRegisterButtonClick = () => Register();
+            _view.OnRegisterButtonClick = () => Register();
         }
+
+        public void OpenView() => _stagePresenter.OpenView(_view);
 
         private async void Register()
         {
             // Register
 
-            _user.Username = View.Username;
-            _user.Password = View.Password;
-            _user.ConsumerKey = View.ConsumerKey;
-            _user.ConsumerSecret = View.ConsumerSecret;
-            _user.TokenValue = View.TokenValue;
-            _user.TokenSecret = View.TokenSecret;
+            _user.Username = _view.Username;
+            _user.Password = _view.Password;
+            _user.ConsumerKey = _view.ConsumerKey;
+            _user.ConsumerSecret = _view.ConsumerSecret;
+            _user.TokenValue = _view.TokenValue;
+            _user.TokenSecret = _view.TokenSecret;
 
             var result = _user.Validate(UserValidationType.Register);
             if(!result.IsValid)
             {
                 _user.Invalidate();
-                View.Error = result.Errors.First().ErrorMessage;
+                _view.Error = result.Errors.First().ErrorMessage;
                 return;
             }
             if(!await _registerRepository.Register(_user))
             {
                 _user.Invalidate();
-                View.Error = "Failed to create user";
+                _view.Error = "Failed to create user";
                 return;
             }
 
             //await _registerRepository.Register();
-            StagePresenter.CloseView(View);
-            StagePresenter.OpenLoginView();
+            _stagePresenter.CloseView(_view);
+            _stagePresenter.OpenLoginView();
         }
     }
 }

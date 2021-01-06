@@ -5,20 +5,18 @@ namespace Presentation.Presenter.Stage
 {
     public class ChildStagePresenter : StagePresenterBase
     {
-        private readonly Func<LoginPresenter> _loginPresenterFactory;
-        private readonly Func<RegisterPresenter> _registerPresenterFactory;
+        private readonly Func<ChildStageViewType, IPresenter> _presenterFactory;
 
-        public ChildStagePresenter(IStageView view, Func<LoginPresenter> loginPresenterFactory, Func<RegisterPresenter> registerPresenterFactory) : base(view)
+        public ChildStagePresenter(IStageView view, Func<ChildStageViewType, IPresenter> presenterFactory) : base(view)
         {
-            _loginPresenterFactory = loginPresenterFactory;
-            _registerPresenterFactory = registerPresenterFactory;
+            _presenterFactory = presenterFactory;
         }
 
         public ChildStageViewType InitialView { private get; set; }
 
-        public void OpenLoginView() => _loginPresenterFactory().OpenView();
+        public void OpenLoginView() => _presenterFactory(ChildStageViewType.Login).OpenView();
 
-        public void OpenRegisterView() => _registerPresenterFactory().OpenView();
+        public void OpenRegisterView() => _presenterFactory(ChildStageViewType.Register).OpenView();
 
         protected override void InitializeStage()
         {

@@ -7,49 +7,55 @@ using System.Linq;
 
 namespace Presentation.Presenter
 {
-    public class LoginPresenter : PresenterBase<ILoginView, ChildStagePresenter>
+    public class LoginPresenter : IPresenter
     {
+        private readonly ILoginView _view;
+        private readonly ChildStagePresenter _stagePresenter;
         private readonly LoginRepository _loginRepository;
         private readonly User _user;
 
-        public LoginPresenter(ILoginView view, ChildStagePresenter stagePresenter, LoginRepository loginRepository, User user) : base(view, stagePresenter)
+        public LoginPresenter(ILoginView view, ChildStagePresenter stagePresenter, LoginRepository loginRepository, User user)
         {
+            _view = view;
+            _stagePresenter = stagePresenter;
             _loginRepository = loginRepository;
             _user = user;
 
-            View.OnLoginButtonClick = () => Login();
-            View.OnRegisterButtonClick = () => OpenRegisterView();
+            _view.OnLoginButtonClick = () => Login();
+            _view.OnRegisterButtonClick = () => OpenRegisterView();
         }
+
+        public void OpenView() => _stagePresenter.OpenView(_view);
 
         private async void Login()
         {
-            _user.Username = View.Username;
-            _user.Password = View.Password;
+            _user.Username = _view.Username;
+            _user.Password = _view.Password;
 
             var result = _user.Validate(UserValidationType.Login);
 
             if(!result.IsValid)
             {
                 _user.Invalidate();
-                View.Error = result.Errors.First().ErrorMessage;
+                _view.Error = result.Errors.First().ErrorMessage;
                 return;
             }
 
             if (!await _loginRepository.Login(_user))
             {
                 _user.Invalidate();
-                View.Error = "Invalid username or password";
+                _view.Error = "Invalid username or password";
                 return;
             }
 
-            StagePresenter.CloseView(View);
-            StagePresenter.CloseStage();
+            _stagePresenter.CloseView(_view);
+            _stagePresenter.CloseStage();
         }
 
         private void OpenRegisterView()
         {
-            StagePresenter.CloseView(View);
-            StagePresenter.OpenRegisterView();
+            _stagePresenter.CloseView(_view);
+            _stagePresenter.OpenRegisterView();
         }
     }
 }

@@ -40,14 +40,20 @@ namespace GUI
                 };
             });
 
-            // Register login View/Presenter
+            // Register login View/Presenter keyed with ChildStageViewType.Login
             builder.RegisterType<LoginView>().As<ILoginView>();
-            builder.RegisterType<LoginPresenter>();
+            builder.RegisterType<LoginPresenter>().As<IPresenter>().Keyed<IPresenter>(ChildStageViewType.Login);
 
-            // Register register View/Presenter
+            // Register register View/Presenter keyed with ChildStageViewType.Register
             builder.RegisterType<RegisterView>().As<IRegisterView>();
-            builder.RegisterType<RegisterPresenter>();
+            builder.RegisterType<RegisterPresenter>().As<IPresenter>().Keyed<IPresenter>(ChildStageViewType.Register);
 
+            // Register an IPresenter factory that returns an IPresenter associated to the ChildStageViewType key
+            builder.Register<Func<ChildStageViewType, IPresenter>>(context =>
+            {
+                var cc = context.Resolve<IComponentContext>();
+                return viewType => cc.ResolveKeyed<IPresenter>(viewType);
+            });
         }
     }
 }
