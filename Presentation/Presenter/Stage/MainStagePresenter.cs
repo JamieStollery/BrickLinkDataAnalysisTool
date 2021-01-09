@@ -1,4 +1,5 @@
-﻿using Data.Common.Model;
+﻿using Data.Common;
+using Data.Common.Model;
 using Presentation.View.Interface;
 using System;
 
@@ -9,32 +10,36 @@ namespace Presentation.Presenter.Stage
         private readonly IMainStageView _view;
         private readonly User _user;
         private readonly Func<ChildStageViewType, ChildStagePresenter> _stagePresenterFactory;
+        private readonly Func<OrderPresenter> _orderPresenterFactory;
 
-        public MainStagePresenter(IMainStageView view, User user, Func<ChildStageViewType, ChildStagePresenter> stagePresenterFactory) : base(view)
+        public MainStagePresenter(IMainStageView view, User user, Func<ChildStageViewType, ChildStagePresenter> stagePresenterFactory, Func<OrderPresenter> orderPresenterFactory) : base(view)
         {
             _view = view;
             _user = user;
             _stagePresenterFactory = stagePresenterFactory;
+            _orderPresenterFactory = orderPresenterFactory;
 
             _view.OnStageGotFocus = () => UpdateControls();
             _view.OnLogoutClick = () => Logout();
             _view.OnLoginClick = () => OpenLoginView();
             _view.OnRegisterClick = () => OpenRegisterView();
+
+            DataMode = DataMode.API;
         }
+
+        public DataMode DataMode { get; private set; }
 
         public void OpenLoginView() => _stagePresenterFactory(ChildStageViewType.Login).OpenStage();
 
         public void OpenRegisterView() => _stagePresenterFactory(ChildStageViewType.Register).OpenStage();
 
-        public void OpenOrderView()
-        {
-            throw new NotImplementedException();
-        }
+        public void OpenOrderView() => _orderPresenterFactory().OpenView();
 
         protected override void InitializeStage()        
         {
             // Initialize Stage
             OpenLoginView();
+            OpenOrderView();
         }
 
         private void UpdateControls()

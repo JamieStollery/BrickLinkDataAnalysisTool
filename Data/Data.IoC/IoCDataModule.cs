@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Data.BrickLinkAPI;
+using Data.Common;
 using Data.Common.Model;
 using Data.Common.Model.Validation;
 using Data.LocalDB;
@@ -28,6 +30,13 @@ namespace Data.IoC
             builder.RegisterInstance<IDbConnection>(new SQLiteConnection(connectionString));
             builder.RegisterType<LoginRepository>().InstancePerLifetimeScope();
             builder.RegisterType<RegisterRepository>().InstancePerLifetimeScope();
+
+            builder.RegisterType<OrderRepository>().As<IOrderRepository>().Keyed<IOrderRepository>(DataMode.API).InstancePerLifetimeScope();
+            builder.Register<Func<DataMode, IOrderRepository>>(context =>
+            {
+                var cc = context.Resolve<IComponentContext>();
+                return mode => cc.ResolveKeyed<IOrderRepository>(mode);
+            });
         }
     }
 }

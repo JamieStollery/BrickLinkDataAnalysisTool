@@ -7,10 +7,12 @@ using FluentValidation;
 using GUI.View;
 using GUI.View.Stage;
 using Presentation;
+using Presentation.Filtering;
 using Presentation.Presenter;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
 using System;
+using System.Collections.Generic;
 
 namespace GUI
 {
@@ -53,6 +55,23 @@ namespace GUI
             {
                 var cc = context.Resolve<IComponentContext>();
                 return viewType => cc.ResolveKeyed<IPresenter>(viewType);
+            });
+
+            builder.RegisterType<OrderPresenter>();
+            builder.RegisterType<OrderView>().As<IOrderView>();
+            builder.RegisterType<ItemView>().As<IItemView>();
+            builder.Register<Func<IReadOnlyList<Item>, IItemView>>(context =>
+            {
+                var cc = context.Resolve<IComponentContext>();
+                return items => cc.Resolve<IItemView>(TypedParameter.From<IReadOnlyList<object>>(items));
+            });
+
+            builder.RegisterType<FilterAnyStrategy>().As<IFilterModeStrategy>().Keyed<IFilterModeStrategy>(FilterMode.Any).InstancePerLifetimeScope();
+            builder.RegisterType<FilterAllStrategy>().As<IFilterModeStrategy>().Keyed<IFilterModeStrategy>(FilterMode.All).InstancePerLifetimeScope();
+            builder.Register<Func<FilterMode, IFilterModeStrategy>>(context =>
+            {
+                var cc = context.Resolve<IComponentContext>();
+                return mode => cc.ResolveKeyed<IFilterModeStrategy>(mode);
             });
         }
     }
