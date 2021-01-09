@@ -1,5 +1,6 @@
 ﻿using Data.Common.Model;
 using Data.Common.Model.Validation;
+using Data.Common.Repository.Interface;
 using Data.LocalDB;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
@@ -11,10 +12,10 @@ namespace Presentation.Presenter
     {
         private readonly ILoginView _view;
         private readonly ChildStagePresenter _stagePresenter;
-        private readonly LoginRepository _loginRepository;
+        private readonly ILoginRepository _loginRepository;
         private readonly User _user;
 
-        public LoginPresenter(ILoginView view, ChildStagePresenter stagePresenter, LoginRepository loginRepository, User user)
+        public LoginPresenter(ILoginView view, ChildStagePresenter stagePresenter, ILoginRepository loginRepository, User user)
         {
             _view = view;
             _stagePresenter = stagePresenter;

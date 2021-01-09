@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Data.Common
+namespace Data.Common.Repository.Interface
 {
     public interface IOrderRepository
     {

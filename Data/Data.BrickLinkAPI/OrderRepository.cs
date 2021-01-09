@@ -1,5 +1,6 @@
 ﻿using Data.Common;
 using Data.Common.Model;
+using Data.Common.Repository.Interface;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

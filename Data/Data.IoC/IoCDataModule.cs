@@ -3,6 +3,7 @@ using Data.BrickLinkAPI;
 using Data.Common;
 using Data.Common.Model;
 using Data.Common.Model.Validation;
+using Data.Common.Repository.Interface;
 using Data.LocalDB;
 using FluentValidation;
 using System;
@@ -28,8 +29,8 @@ namespace Data.IoC
 
             var connectionString = $"Data Source={Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Users.db3")};Version=3;";
             builder.RegisterInstance<IDbConnection>(new SQLiteConnection(connectionString));
-            builder.RegisterType<LoginRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<RegisterRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<UserRepository>().As<ILoginRepository>().As<IRegisterRepository>().InstancePerLifetimeScope();
+
 
             builder.RegisterType<OrderRepository>().As<IOrderRepository>().Keyed<IOrderRepository>(DataMode.API).InstancePerLifetimeScope();
             builder.Register<Func<DataMode, IOrderRepository>>(context =>
