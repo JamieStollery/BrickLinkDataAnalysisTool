@@ -9,7 +9,7 @@ namespace Presentation.Presenter.Stage
         protected StagePresenterBase(IStageView view)
         {
             _view = view;
-            _view.OnOpened = () => InitializeStage();
+            _view.OnStageOpened = () => InitializeStage();
         }
 
         public void OpenStage() => _view.OpenStage();

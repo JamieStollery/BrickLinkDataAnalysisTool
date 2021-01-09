@@ -12,8 +12,8 @@ namespace GUI.View.Stage
             InitializeComponent();
         }
 
-        public Action OnOpened { set => Shown += (sender, e) => value(); }
-        public Action OnStageGotFocus { set => GotFocus += (sender, e) => value(); }
+        public Action OnStageOpened { set => Shown += (sender, e) => value(); }
+        public Action OnStageClosed { set => FormClosed += (sender, e) => value(); }
         public Action OnLogoutClick { set => miLogout.Click += (sender, e) => value(); }
         public Action OnLoginClick { set => miLogin.Click += (sender, e) => value(); }
         public Action OnRegisterClick { set => miRegister.Click += (sender, e) => value(); }

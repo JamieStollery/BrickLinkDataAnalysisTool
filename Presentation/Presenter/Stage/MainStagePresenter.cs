@@ -16,10 +16,14 @@ namespace Presentation.Presenter.Stage
         {
             _view = view;
             _user = user;
-            _stagePresenterFactory = stagePresenterFactory;
+            _stagePresenterFactory = (viewType) =>
+            {
+                var childStagePresenter = stagePresenterFactory(viewType);
+                childStagePresenter.OnStageClosed = () => UpdateControls();
+                return childStagePresenter;
+            };
             _orderPresenterFactory = orderPresenterFactory;
 
-            _view.OnStageGotFocus = () => UpdateControls();
             _view.OnLogoutClick = () => Logout();
             _view.OnLoginClick = () => OpenLoginView();
             _view.OnRegisterClick = () => OpenRegisterView();

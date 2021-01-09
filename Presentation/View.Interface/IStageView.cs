@@ -4,7 +4,8 @@ namespace Presentation.View.Interface
 {
     public interface IStageView
     {
-        Action OnOpened { set; }
+        Action OnStageOpened { set; }
+        Action OnStageClosed { set; }
         void OpenStage();
         void CloseStage();
         void AddView(IView view);
