@@ -2,6 +2,6 @@
 {
     public interface IPresenter
     {
-        void OpenView();
+        void OpenOrderView();
     }
 }

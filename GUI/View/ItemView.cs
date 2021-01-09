@@ -22,6 +22,6 @@ namespace GUI.View
             dgvItems.DataSource = items;
         }
 
-        public Action<IItemView> OnBackButtonClick { set => btnBack.Click += (sender, e) => value(this); }
+        public Action OnBackButtonClick { set => btnBack.Click += (sender, e) => value(); }
     }
 }

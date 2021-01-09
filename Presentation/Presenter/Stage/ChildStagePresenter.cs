@@ -17,9 +17,9 @@ namespace Presentation.Presenter.Stage
         public ChildStageViewType InitialView { private get; set; }
         public Action OnStageClosed { set => _view.OnStageClosed = value; }
 
-        public void OpenLoginView() => _presenterFactory(ChildStageViewType.Login).OpenView();
+        public void OpenLoginView() => _presenterFactory(ChildStageViewType.Login).OpenOrderView();
 
-        public void OpenRegisterView() => _presenterFactory(ChildStageViewType.Register).OpenView();
+        public void OpenRegisterView() => _presenterFactory(ChildStageViewType.Register).OpenOrderView();
 
         protected override void InitializeStage()
         {

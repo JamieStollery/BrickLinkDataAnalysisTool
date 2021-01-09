@@ -5,6 +5,7 @@ namespace Presentation.Presenter.Stage
     public abstract class StagePresenterBase
     {
         private readonly IStageView _view;
+        private IView _currentView;
 
         protected StagePresenterBase(IStageView view)
         {
@@ -16,9 +17,14 @@ namespace Presentation.Presenter.Stage
 
         public void CloseStage() => _view.CloseStage();
 
-        public void CloseView(IView view) => _view.RemoveView(view);
+        public void OpenView(IView view)
+        {
+            if (_currentView != null) CloseCurrentView();
+            _view.AddView(view);
+            _currentView = view;
+        }
 
-        public void OpenView(IView view) => _view.AddView(view);
+        protected void CloseCurrentView() => _view.RemoveView(_currentView);
 
         protected abstract void InitializeStage();
     }

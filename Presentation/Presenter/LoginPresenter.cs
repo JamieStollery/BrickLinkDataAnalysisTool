@@ -25,7 +25,7 @@ namespace Presentation.Presenter
             _view.OnRegisterButtonClick = () => OpenRegisterView();
         }
 
-        public void OpenView() => _stagePresenter.OpenView(_view);
+        public void OpenOrderView() => _stagePresenter.OpenView(_view);
 
         private async void Login()
         {
@@ -48,13 +48,11 @@ namespace Presentation.Presenter
                 return;
             }
 
-            _stagePresenter.CloseView(_view);
             _stagePresenter.CloseStage();
         }
 
         private void OpenRegisterView()
         {
-            _stagePresenter.CloseView(_view);
             _stagePresenter.OpenRegisterView();
         }
     }

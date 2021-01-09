@@ -19,7 +19,7 @@ namespace Presentation.Presenter.Stage
             _stagePresenterFactory = (viewType) =>
             {
                 var childStagePresenter = stagePresenterFactory(viewType);
-                childStagePresenter.OnStageClosed = () => UpdateControls();
+                childStagePresenter.OnStageClosed = () => UpdateStage();
                 return childStagePresenter;
             };
             _orderPresenterFactory = orderPresenterFactory;
@@ -37,14 +37,9 @@ namespace Presentation.Presenter.Stage
 
         public void OpenRegisterView() => _stagePresenterFactory(ChildStageViewType.Register).OpenStage();
 
-        public void OpenOrderView() => _orderPresenterFactory().OpenView();
+        public void OpenOrderView() => _orderPresenterFactory().OpenOrderView();
 
-        protected override void InitializeStage()        
-        {
-            // Initialize Stage
-            OpenLoginView();
-            OpenOrderView();
-        }
+        protected override void InitializeStage() => OpenLoginView();
 
         private void UpdateControls()
         {
@@ -57,6 +52,12 @@ namespace Presentation.Presenter.Stage
         {
             _user.Invalidate();
             UpdateControls();
+            CloseCurrentView();
+        }
+        private void UpdateStage()
+        {
+            UpdateControls();
+            if (_user.IsLoggedIn) OpenOrderView();
         }
     }
 }

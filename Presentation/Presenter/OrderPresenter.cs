@@ -26,7 +26,7 @@ namespace Presentation.Presenter
             _itemViewFactory = (items) =>
             { 
                 var itemView = itemViewFactory(items);
-                itemView.OnBackButtonClick = (view) => CloseItemView(view);
+                itemView.OnBackButtonClick = () => OpenOrderView();
                 return itemView;
             };
             _stagePresenter = stagePresenter;
@@ -42,7 +42,9 @@ namespace Presentation.Presenter
         private IEnumerable<ItemType> ItemTypes => _orderView.ItemTypes.Select(type => Enum.Parse<ItemType>(type));
         private IFilterModeStrategy ItemTypeFilterModeStrategy => _filterModeStrategyFactory(Enum.Parse<FilterMode>(_orderView.ItemTypeFilterMode));
 
-        public void OpenView() => _stagePresenter.OpenView(_orderView);
+        public void OpenOrderView() => _stagePresenter.OpenView(_orderView);
+
+        private void OpenItemView(int orderId) => _stagePresenter.OpenView(_itemViewFactory(_orders.Single(order => order.Id == orderId).Items.ToList()));
 
         private async void Search()
         {
@@ -57,18 +59,6 @@ namespace Presentation.Presenter
             if (_orders == null) return;
             var orders = ItemTypeFilterModeStrategy.Filter(_orders, item => ItemTypes.Contains(item.ItemType));
             _orderView.Orders = orders.ToList();
-        }
-
-        private void OpenItemView(int orderId)
-        {
-            _stagePresenter.CloseView(_orderView);
-            _stagePresenter.OpenView(_itemViewFactory(_orders.Single(order => order.Id == orderId).Items.ToList()));
-        }
-        
-        private void CloseItemView(IItemView itemView)
-        {
-            _stagePresenter.CloseView(itemView);
-            OpenView();
         }
     }
 }
