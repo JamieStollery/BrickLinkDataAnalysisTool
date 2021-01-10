@@ -1,11 +1,9 @@
 ﻿using Autofac;
-using Data.BrickLinkAPI;
+using Autofac.Core;
 using Data.Common;
 using Data.Common.Model;
-using Data.Common.Model.Validation;
 using Data.Common.Repository.Interface;
 using Data.LocalDB;
-using FluentValidation;
 using System;
 using System.Data;
 using System.Data.SQLite;
@@ -19,25 +17,27 @@ namespace Data.IoC
         {
             builder.RegisterType<User>().SingleInstance();
 
-            builder.RegisterType<LoginUserValidator>().As<IValidator<User>>().Keyed<IValidator<User>>(UserValidationType.Login).InstancePerLifetimeScope();
-            builder.RegisterType<RegisterUserValidator>().As<IValidator<User>>().Keyed<IValidator<User>>(UserValidationType.Register).InstancePerLifetimeScope();
-            builder.Register<Func<UserValidationType, IValidator<User>>>(context =>
-            {
-                var cc = context.Resolve<IComponentContext>();
-                return validationType => cc.ResolveKeyed<IValidator<User>>(validationType);
-            });
+            var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var usersConnectionString = $"Data Source={Path.Combine(folderPath, "Users.db3")};Version=3;";
+            var ordersConnectionString = $"Data Source={Path.Combine(folderPath, "BrickLink.db3")};Version=3;";
 
-            var connectionString = $"Data Source={Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Users.db3")};Version=3;";
-            builder.RegisterInstance<IDbConnection>(new SQLiteConnection(connectionString));
-            builder.RegisterType<UserRepository>().As<ILoginRepository>().As<IRegisterRepository>().InstancePerLifetimeScope();
+            builder.RegisterInstance<IDbConnection>(new SQLiteConnection(usersConnectionString)).Keyed<IDbConnection>(Database.Users).SingleInstance();
+            builder.RegisterInstance<IDbConnection>(new SQLiteConnection(ordersConnectionString)).Keyed<IDbConnection>(Database.Orders).SingleInstance();
 
+            builder.RegisterType<UserRepository>().As<ILoginRepository>().As<IRegisterRepository>().WithParameter(ResolvedParameter.ForKeyed<IDbConnection>(Database.Users)).InstancePerLifetimeScope();
 
-            builder.RegisterType<OrderRepository>().As<IOrderRepository>().Keyed<IOrderRepository>(DataMode.API).InstancePerLifetimeScope();
+            builder.RegisterType<BrickLinkAPI.OrderRepository>().As<IOrderRepository>().Keyed<IOrderRepository>(DataMode.API).InstancePerLifetimeScope();
+            builder.RegisterType<LocalDB.OrderRepository>().As<IOrderRepository>().Keyed<IOrderRepository>(DataMode.Database).InstancePerLifetimeScope();
             builder.Register<Func<DataMode, IOrderRepository>>(context =>
             {
                 var cc = context.Resolve<IComponentContext>();
-                return mode => cc.ResolveKeyed<IOrderRepository>(mode);
+                return mode => mode == DataMode.Database ? cc.ResolveKeyed<IOrderRepository>(mode, ResolvedParameter.ForKeyed<IDbConnection>(Database.Orders)) : cc.ResolveKeyed<IOrderRepository>(mode);
             });
+        }
+        private enum Database
+        {
+            Users,
+            Orders
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Data.Common.Model.Validation
+﻿namespace Presentation.Model.Validation
 {
     public enum UserValidationType
     {

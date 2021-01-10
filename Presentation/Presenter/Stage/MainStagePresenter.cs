@@ -28,7 +28,7 @@ namespace Presentation.Presenter.Stage
             _view.OnLoginClick = () => OpenLoginView();
             _view.OnRegisterClick = () => OpenRegisterView();
 
-            DataMode = DataMode.API;
+            DataMode = DataMode.Database;
         }
 
         public DataMode DataMode { get; private set; }

@@ -1,4 +1,5 @@
-﻿using Data.Common.Model;
+﻿using Presentation.Model.Items;
+using Presentation.Model.Orders;
 using System;
 using System.Collections.Generic;
 

@@ -1,12 +1,15 @@
 ﻿using Data.Common;
-using Data.Common.Model;
 using Data.Common.Repository.Interface;
 using Presentation.Filtering;
+using Presentation.Model.Items;
+using Presentation.Model.Mapping;
+using Presentation.Model.Orders;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Presentation.Presenter
 {
@@ -18,10 +21,11 @@ namespace Presentation.Presenter
         // Maybe this factory does not need the DataMode parameter if it can be resolved from the MainStagePresenter
         private readonly Func<DataMode, IOrderRepository> _repositoryFactory;
         private readonly Func<FilterMode, IFilterModeStrategy> _filterModeStrategyFactory;
+        private readonly IDtoMapper _mapper;
 
         private IReadOnlyList<Order> _orders;
 
-        public OrderPresenter(IOrderView orderView, Func<IReadOnlyList<Item>, IItemView> itemViewFactory, MainStagePresenter stagePresenter, Func<DataMode, IOrderRepository> repositoryFactory, Func<FilterMode, IFilterModeStrategy> filterModeStrategyFactory)
+        public OrderPresenter(IOrderView orderView, Func<IReadOnlyList<Item>, IItemView> itemViewFactory, MainStagePresenter stagePresenter, Func<DataMode, IOrderRepository> repositoryFactory, Func<FilterMode, IFilterModeStrategy> filterModeStrategyFactory, IDtoMapper mapper)
         {
             _orderView = orderView;
             _itemViewFactory = (items) =>
@@ -33,6 +37,7 @@ namespace Presentation.Presenter
             _stagePresenter = stagePresenter;
             _repositoryFactory = repositoryFactory;
             _filterModeStrategyFactory = filterModeStrategyFactory;
+            _mapper = mapper;
 
             _orderView.OnSearchButtonClick = () => Search();
             _orderView.OnFilterChanged = () => FilterOrders();
@@ -55,8 +60,11 @@ namespace Presentation.Presenter
 
         private async void Search()
         {
-            var orders = await _repositoryFactory(_stagePresenter.DataMode).GetOrders();
-            _orders = orders.ToList();
+            var orderDtos = await _repositoryFactory(_stagePresenter.DataMode).GetOrders();
+
+            var tasks = orderDtos.Select(async orderDto => _mapper.Map(orderDto, await _repositoryFactory(_stagePresenter.DataMode).GetItems(orderDto.Order_id)));
+
+            _orders = await Task.WhenAll(tasks.ToList());
 
             FilterOrders();
         }
@@ -64,10 +72,10 @@ namespace Presentation.Presenter
         private void FilterOrders()
         {
             if (_orders == null) return;
-            var orders = ItemTypeFilterModeStrategy.Filter(_orders, item => ItemTypes.Contains(item.ItemType));
+            var orders = ItemTypeFilterModeStrategy.Filter(_orders, item => ItemTypes.Contains(item.Type));
             if (ItemCondition != null)
             {
-                orders = ItemConditionFilterModeStrategy.Filter(orders, item => item.ItemCondition == ItemCondition);
+                orders = ItemConditionFilterModeStrategy.Filter(orders, item => item.Condition == ItemCondition);
             }
             _orderView.Orders = orders.ToList();
         }

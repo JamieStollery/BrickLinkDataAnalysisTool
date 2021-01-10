@@ -1,18 +1,20 @@
 ﻿using Autofac;
 using Autofac.Core;
 using Data.Common.Model;
-using Data.Common.Model.Validation;
 using Data.IoC;
 using FluentValidation;
 using GUI.View;
 using GUI.View.Stage;
 using Presentation;
 using Presentation.Filtering;
+using Presentation.Model.Validation;
 using Presentation.Presenter;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
 using System;
 using System.Collections.Generic;
+using Presentation.Model.Items;
+using Presentation.Model.Mapping;
 
 namespace GUI
 {
@@ -73,6 +75,16 @@ namespace GUI
                 var cc = context.Resolve<IComponentContext>();
                 return mode => cc.ResolveKeyed<IFilterModeStrategy>(mode);
             });
+            
+            builder.RegisterType<LoginUserValidator>().As<IValidator<User>>().Keyed<IValidator<User>>(UserValidationType.Login).InstancePerLifetimeScope();
+            builder.RegisterType<RegisterUserValidator>().As<IValidator<User>>().Keyed<IValidator<User>>(UserValidationType.Register).InstancePerLifetimeScope();
+            builder.Register<Func<UserValidationType, IValidator<User>>>(context =>
+            {
+                var cc = context.Resolve<IComponentContext>();
+                return validationType => cc.ResolveKeyed<IValidator<User>>(validationType);
+            });
+
+            builder.RegisterType<DtoMapper>().As<IDtoMapper>().InstancePerLifetimeScope();
         }
     }
 }

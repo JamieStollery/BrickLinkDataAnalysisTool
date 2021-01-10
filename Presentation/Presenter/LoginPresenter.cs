@@ -1,7 +1,6 @@
 ﻿using Data.Common.Model;
-using Data.Common.Model.Validation;
 using Data.Common.Repository.Interface;
-using Data.LocalDB;
+using FluentValidation;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
 using System.Linq;
@@ -14,13 +13,15 @@ namespace Presentation.Presenter
         private readonly ChildStagePresenter _stagePresenter;
         private readonly ILoginRepository _loginRepository;
         private readonly User _user;
+        private readonly IValidator<User> _userValidator;
 
-        public LoginPresenter(ILoginView view, ChildStagePresenter stagePresenter, ILoginRepository loginRepository, User user)
+        public LoginPresenter(ILoginView view, ChildStagePresenter stagePresenter, ILoginRepository loginRepository, User user, IValidator<User> userValidator)
         {
             _view = view;
             _stagePresenter = stagePresenter;
             _loginRepository = loginRepository;
             _user = user;
+            _userValidator = userValidator;
 
             _view.OnLoginButtonClick = () => Login();
             _view.OnRegisterButtonClick = () => OpenRegisterView();
@@ -33,7 +34,7 @@ namespace Presentation.Presenter
             _user.Username = _view.Username;
             _user.Password = _view.Password;
 
-            var result = _user.Validate(UserValidationType.Login);
+            var result = _userValidator.Validate(_user);
 
             if(!result.IsValid)
             {

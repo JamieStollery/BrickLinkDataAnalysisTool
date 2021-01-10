@@ -1,6 +1,7 @@
-﻿using FluentValidation;
+﻿using Data.Common.Model;
+using FluentValidation;
 
-namespace Data.Common.Model.Validation
+namespace Presentation.Model.Validation
 {
     public class LoginUserValidator : AbstractValidator<User>
     {

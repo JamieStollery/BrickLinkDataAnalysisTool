@@ -1,4 +1,4 @@
-﻿namespace Data.Common.Model
+﻿namespace Presentation.Model.Items
 {
     public enum ItemCondition
     {

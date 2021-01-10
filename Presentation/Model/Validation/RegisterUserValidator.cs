@@ -1,9 +1,6 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Data.Common.Model.Validation
+namespace Presentation.Model.Validation
 {
     public class RegisterUserValidator : LoginUserValidator
     {
