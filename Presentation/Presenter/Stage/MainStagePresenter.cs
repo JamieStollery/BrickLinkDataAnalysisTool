@@ -39,7 +39,13 @@ namespace Presentation.Presenter.Stage
 
         public void OpenOrderView() => _orderPresenterFactory().OpenOrderView();
 
-        protected override void InitializeStage() => OpenLoginView();
+        protected override void InitializeStage()
+        {
+            //OpenLoginView();
+            _user.Username = "JamieStollery";
+            _user.Password = "test";
+            UpdateStage();
+        }
 
         private void UpdateControls()
         {

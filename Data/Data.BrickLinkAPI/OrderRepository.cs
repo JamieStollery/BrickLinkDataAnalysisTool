@@ -14,18 +14,18 @@ namespace Data.BrickLinkAPI
             {
                 new Order(1, new List<Item>()
                 {
-                    new Item("a1", ItemType.Part),
-                    new Item("a2", ItemType.Part)
+                    new Item("a1", ItemType.Part, ItemCondition.New),
+                    new Item("a2", ItemType.Part, ItemCondition.New)
                 }),
                 new Order(2, new List<Item>()
                 {
-                    new Item("b1", ItemType.Minifig),
-                    new Item("b2", ItemType.Minifig)
+                    new Item("b1", ItemType.Minifig, ItemCondition.Used),
+                    new Item("b2", ItemType.Minifig, ItemCondition.Used)
                 }),
                 new Order(3, new List<Item>()
                 {
-                    new Item("c1", ItemType.Part),
-                    new Item("c2", ItemType.Minifig)
+                    new Item("c1", ItemType.Part, ItemCondition.Used),
+                    new Item("c2", ItemType.Minifig, ItemCondition.New)
                 })
             };
             return Task.FromResult<IEnumerable<Order>>(orders);

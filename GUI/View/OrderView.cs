@@ -24,7 +24,9 @@ namespace GUI.View
             set
             {
                 fmsItemTypes.OnModeChanged = value;
+                fmsItemCondition.OnModeChanged = value;
                 clbItemTypes.SelectedValueChanged += (sender, e) => value();
+                cbItemCondition.SelectedValueChanged += (sender, e) => value();
             }
         }
         public Action<int> OnOrderDoubleClick { set => dgvOrders.CellDoubleClick += (sender, e) => value(int.Parse(dgvOrders.Rows[e.RowIndex].Cells[0].Value.ToString())); }
@@ -43,5 +45,17 @@ namespace GUI.View
 
         public string ItemTypeFilterMode => fmsItemTypes.SelectedMode;
 
+        public string ItemConditionFilterMode => fmsItemCondition.SelectedMode;
+
+        public string ItemCondition => cbItemCondition.SelectedItem?.ToString();
+
+        public IEnumerable<string> ItemConditions
+        {
+            set
+            {
+                cbItemCondition.Items.AddRange(value.ToArray());
+                cbItemCondition.SelectedIndex = 0;
+            }
+        }
     }
 }

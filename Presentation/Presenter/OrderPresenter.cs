@@ -37,11 +37,17 @@ namespace Presentation.Presenter
             _orderView.OnSearchButtonClick = () => Search();
             _orderView.OnFilterChanged = () => FilterOrders();
             _orderView.OnOrderDoubleClick = (id) => OpenItemView(id);
+
             _orderView.ItemTypes = Enum.GetNames(typeof(ItemType));
+            var itemConditions = new List<string>() { "Any" };
+            itemConditions.AddRange(Enum.GetNames(typeof(ItemCondition)));
+            _orderView.ItemConditions = itemConditions;
         }
 
         private IEnumerable<ItemType> ItemTypes => _orderView.ItemTypes.Select(type => Enum.Parse<ItemType>(type));
+        private ItemCondition? ItemCondition => Enum.TryParse(_orderView.ItemCondition, out ItemCondition itemCondition) ? itemCondition : null as ItemCondition?;
         private IFilterModeStrategy ItemTypeFilterModeStrategy => _filterModeStrategyFactory(Enum.Parse<FilterMode>(_orderView.ItemTypeFilterMode));
+        private IFilterModeStrategy ItemConditionFilterModeStrategy => _filterModeStrategyFactory(Enum.Parse<FilterMode>(_orderView.ItemConditionFilterMode));
 
         public void OpenOrderView() => _stagePresenter.OpenView(_orderView);
 
@@ -59,6 +65,10 @@ namespace Presentation.Presenter
         {
             if (_orders == null) return;
             var orders = ItemTypeFilterModeStrategy.Filter(_orders, item => ItemTypes.Contains(item.ItemType));
+            if (ItemCondition != null)
+            {
+                orders = ItemConditionFilterModeStrategy.Filter(orders, item => item.ItemCondition == ItemCondition);
+            }
             _orderView.Orders = orders.ToList();
         }
     }
