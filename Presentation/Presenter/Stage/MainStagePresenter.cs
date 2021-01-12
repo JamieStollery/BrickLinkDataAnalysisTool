@@ -37,7 +37,7 @@ namespace Presentation.Presenter.Stage
 
         public void OpenRegisterView() => _stagePresenterFactory(ChildStageViewType.Register).OpenStage();
 
-        public void OpenOrderView() => _orderPresenterFactory().OpenOrderView();
+        public void OpenOrderView() => _orderPresenterFactory().OpenView();
 
         protected override void InitializeStage()
         {

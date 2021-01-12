@@ -36,7 +36,7 @@ namespace Presentation.Presenter
             _itemViewFactory = (items) =>
             { 
                 var itemView = itemViewFactory(items);
-                itemView.OnBackButtonClick = () => OpenOrderView();
+                itemView.OnBackButtonClick = () => OpenView();
                 return itemView;
             };
             _stagePresenter = stagePresenter;
@@ -62,7 +62,7 @@ namespace Presentation.Presenter
         private IAnyAllFilterModeStrategy ItemConditionFilterModeStrategy => _anyAllFilterModeStrategyFactory(Enum.Parse<AnyAllFilterMode>(_orderView.ItemConditionFilterMode));
         private IMinMaxFilterModeStrategy ItemCountFilterModeStrategy => _minMaxFilterModeStrategyFactory(Enum.Parse<ItemCountType>(_orderView.ItemCountType), Enum.Parse<MinMaxFilterMode>(_orderView.ItemCountTypeFilterMode));
 
-        public void OpenOrderView() => _stagePresenter.OpenView(_orderView);
+        public void OpenView() => _stagePresenter.OpenView(_orderView);
 
         private void OpenItemView(int orderId) => _stagePresenter.OpenView(_itemViewFactory(_orders.Single(order => order.Id == orderId).Items.ToList()));
 

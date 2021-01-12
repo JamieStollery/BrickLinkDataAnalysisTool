@@ -26,7 +26,7 @@ namespace Presentation.Presenter
             _view.OnRegisterButtonClick = () => Register();
         }
 
-        public void OpenOrderView() => _stagePresenter.OpenView(_view);
+        public void OpenView() => _stagePresenter.OpenView(_view);
 
         private async void Register()
         {
