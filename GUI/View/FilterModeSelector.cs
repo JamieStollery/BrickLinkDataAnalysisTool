@@ -8,22 +8,54 @@ namespace GUI.View
         public FilterModeSelector()
         {
             InitializeComponent();
-            rbAny.CheckedChanged += (sender, e) => 
+            rb1.CheckedChanged += (sender, e) => 
             {
-                if (!rbAny.Checked) return;
-                rbAll.Checked = false;
+                if (!rb1.Checked) return;
+                rb2.Checked = false;
                 OnModeChanged();
             };
-            rbAll.CheckedChanged += (sender, e) =>
+            rb2.CheckedChanged += (sender, e) =>
             {
-                if (!rbAll.Checked) return;
-                rbAny.Checked = false;
+                if (!rb2.Checked) return;
+                rb1.Checked = false;
                 OnModeChanged();
             };
         }
 
         public Action OnModeChanged { private get; set; }
 
-        public string SelectedMode => rbAll.Checked ? rbAll.Text : rbAny.Text;
+        public string SelectedMode => rb2.Checked ? rb2.Text : rb1.Text;
+
+        private bool _useMinMax;
+        public bool UseMinMax
+        {
+            get => _useMinMax;
+            set 
+            {
+                if(value)
+                {
+                    rb1.Text = "Min";
+                    rb2.Text = "Max";
+                    UseAnyAll = !value;
+                }
+                _useMinMax = value;
+            }
+        }
+
+        private bool _useAnyAll;
+        public bool UseAnyAll
+        {
+            get => _useAnyAll;
+            set 
+            {
+                if(value)
+                {
+                    rb1.Text = "Any";
+                    rb2.Text = "All";
+                    UseMinMax = !value;
+                }
+                _useAnyAll = value;
+            }
+        }
     }
 }

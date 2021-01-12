@@ -1,6 +1,9 @@
 ﻿using Data.Common;
 using Data.Common.Repository.Interface;
 using Presentation.Filtering;
+using Presentation.Filtering.AnyAll;
+using Presentation.Filtering.MinMax;
+using Presentation.Model;
 using Presentation.Model.Items;
 using Presentation.Model.Mapping;
 using Presentation.Model.Orders;
@@ -13,19 +16,21 @@ using System.Threading.Tasks;
 
 namespace Presentation.Presenter
 {
-    public class OrderPresenter : IPresenter
+    public partial class OrderPresenter : IPresenter
     {
         private readonly IOrderView _orderView;
         private readonly Func<IReadOnlyList<Item>, IItemView> _itemViewFactory;
         private readonly MainStagePresenter _stagePresenter;
         // Maybe this factory does not need the DataMode parameter if it can be resolved from the MainStagePresenter
         private readonly Func<DataMode, IOrderRepository> _repositoryFactory;
-        private readonly Func<FilterMode, IFilterModeStrategy> _filterModeStrategyFactory;
+        private readonly Func<AnyAllFilterMode, IAnyAllFilterModeStrategy> _anyAllFilterModeStrategyFactory;
+        private readonly Func<ItemCountType, MinMaxFilterMode, IMinMaxFilterModeStrategy> _minMaxFilterModeStrategyFactory;
         private readonly IDtoMapper _mapper;
 
         private IReadOnlyList<Order> _orders;
 
-        public OrderPresenter(IOrderView orderView, Func<IReadOnlyList<Item>, IItemView> itemViewFactory, MainStagePresenter stagePresenter, Func<DataMode, IOrderRepository> repositoryFactory, Func<FilterMode, IFilterModeStrategy> filterModeStrategyFactory, IDtoMapper mapper)
+        public OrderPresenter(IOrderView orderView, Func<IReadOnlyList<Item>, IItemView> itemViewFactory, MainStagePresenter stagePresenter, Func<DataMode, IOrderRepository> repositoryFactory,
+            Func<AnyAllFilterMode, IAnyAllFilterModeStrategy> anyAllFilterModeStrategyFactory, Func<ItemCountType, MinMaxFilterMode, IMinMaxFilterModeStrategy> minMaxFilterModeStrategyFactory, IDtoMapper mapper)
         {
             _orderView = orderView;
             _itemViewFactory = (items) =>
@@ -36,7 +41,8 @@ namespace Presentation.Presenter
             };
             _stagePresenter = stagePresenter;
             _repositoryFactory = repositoryFactory;
-            _filterModeStrategyFactory = filterModeStrategyFactory;
+            _anyAllFilterModeStrategyFactory = anyAllFilterModeStrategyFactory;
+            _minMaxFilterModeStrategyFactory = minMaxFilterModeStrategyFactory;
             _mapper = mapper;
 
             _orderView.OnSearchButtonClick = () => Search();
@@ -47,12 +53,14 @@ namespace Presentation.Presenter
             var itemConditions = new List<string>() { "Any" };
             itemConditions.AddRange(Enum.GetNames(typeof(ItemCondition)));
             _orderView.ItemConditions = itemConditions;
+            _orderView.ItemCountTypes = Enum.GetNames(typeof(ItemCountType));
         }
 
         private IEnumerable<ItemType> ItemTypes => _orderView.ItemTypes.Select(type => Enum.Parse<ItemType>(type));
         private ItemCondition? ItemCondition => Enum.TryParse(_orderView.ItemCondition, out ItemCondition itemCondition) ? itemCondition : null as ItemCondition?;
-        private IFilterModeStrategy ItemTypeFilterModeStrategy => _filterModeStrategyFactory(Enum.Parse<FilterMode>(_orderView.ItemTypeFilterMode));
-        private IFilterModeStrategy ItemConditionFilterModeStrategy => _filterModeStrategyFactory(Enum.Parse<FilterMode>(_orderView.ItemConditionFilterMode));
+        private IAnyAllFilterModeStrategy ItemTypeFilterModeStrategy => _anyAllFilterModeStrategyFactory(Enum.Parse<AnyAllFilterMode>(_orderView.ItemTypeFilterMode));
+        private IAnyAllFilterModeStrategy ItemConditionFilterModeStrategy => _anyAllFilterModeStrategyFactory(Enum.Parse<AnyAllFilterMode>(_orderView.ItemConditionFilterMode));
+        private IMinMaxFilterModeStrategy ItemCountFilterModeStrategy => _minMaxFilterModeStrategyFactory(Enum.Parse<ItemCountType>(_orderView.ItemCountType), Enum.Parse<MinMaxFilterMode>(_orderView.ItemCountTypeFilterMode));
 
         public void OpenOrderView() => _stagePresenter.OpenView(_orderView);
 
@@ -72,12 +80,24 @@ namespace Presentation.Presenter
         private void FilterOrders()
         {
             if (_orders == null) return;
-            var orders = ItemTypeFilterModeStrategy.Filter(_orders, item => ItemTypes.Contains(item.Type));
+            IEnumerable<Order> filteredOrders = new List<Order>(_orders);
+
+            // Filter orders by item type
+            if(ItemTypes.Count() != 0)
+            {
+                filteredOrders = ItemTypeFilterModeStrategy.Filter(filteredOrders, item => ItemTypes.Contains(item.Type));
+            }
+
+            // Filter orders by item condition
             if (ItemCondition != null)
             {
-                orders = ItemConditionFilterModeStrategy.Filter(orders, item => item.Condition == ItemCondition);
+                filteredOrders = ItemConditionFilterModeStrategy.Filter(filteredOrders, item => item.Condition == ItemCondition);
             }
-            _orderView.Orders = orders.ToList();
+
+            // Filter orders by item count
+            filteredOrders = ItemCountFilterModeStrategy.Filter(filteredOrders, _orderView.ItemCount);
+
+            _orderView.Orders = filteredOrders.ToList();
         }
     }
 }

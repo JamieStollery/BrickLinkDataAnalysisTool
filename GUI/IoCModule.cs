@@ -15,6 +15,10 @@ using System;
 using System.Collections.Generic;
 using Presentation.Model.Items;
 using Presentation.Model.Mapping;
+using Presentation.Filtering.AnyAll;
+using Presentation.Model;
+using Presentation.Filtering.MinMax;
+using Presentation.Model.Orders;
 
 namespace GUI
 {
@@ -68,14 +72,27 @@ namespace GUI
                 return items => cc.Resolve<IItemView>(TypedParameter.From<IReadOnlyList<object>>(items));
             });
 
-            builder.RegisterType<FilterAnyStrategy>().As<IFilterModeStrategy>().Keyed<IFilterModeStrategy>(FilterMode.Any).InstancePerLifetimeScope();
-            builder.RegisterType<FilterAllStrategy>().As<IFilterModeStrategy>().Keyed<IFilterModeStrategy>(FilterMode.All).InstancePerLifetimeScope();
-            builder.Register<Func<FilterMode, IFilterModeStrategy>>(context =>
+            // Register any/all filter mode strategies
+            builder.RegisterType<FilterAnyStrategy>().As<IAnyAllFilterModeStrategy>().Keyed<IAnyAllFilterModeStrategy>(AnyAllFilterMode.Any).InstancePerLifetimeScope();
+            builder.RegisterType<FilterAllStrategy>().As<IAnyAllFilterModeStrategy>().Keyed<IAnyAllFilterModeStrategy>(AnyAllFilterMode.All).InstancePerLifetimeScope();
+            builder.Register<Func<AnyAllFilterMode, IAnyAllFilterModeStrategy>>(context =>
             {
                 var cc = context.Resolve<IComponentContext>();
-                return mode => cc.ResolveKeyed<IFilterModeStrategy>(mode);
+                return mode => cc.ResolveKeyed<IAnyAllFilterModeStrategy>(mode);
             });
-            
+
+            // Register min/max filter mode strategies
+            builder.RegisterType<ItemCountFilterMaxStrategy>().As<IMinMaxFilterModeStrategy>().Keyed<IMinMaxFilterModeStrategy>(MinMaxFilterMode.Max);
+            builder.RegisterType<ItemCountFilterMinStrategy>().As<IMinMaxFilterModeStrategy>().Keyed<IMinMaxFilterModeStrategy>(MinMaxFilterMode.Min);
+            builder.Register<Func<ItemCountType, MinMaxFilterMode, IMinMaxFilterModeStrategy>>(context =>
+            {
+                var cc = context.Resolve<IComponentContext>();
+                return (countType, mode) => {
+                    int func(Order order) => countType == ItemCountType.Total ? order.TotalCount : order.UniqueCount;
+                    return cc.ResolveKeyed<IMinMaxFilterModeStrategy>(mode, TypedParameter.From((Func<Order, int>)func));
+                };
+            });
+          
             builder.RegisterType<LoginUserValidator>().As<IValidator<User>>().Keyed<IValidator<User>>(UserValidationType.Login).InstancePerLifetimeScope();
             builder.RegisterType<RegisterUserValidator>().As<IValidator<User>>().Keyed<IValidator<User>>(UserValidationType.Register).InstancePerLifetimeScope();
             builder.Register<Func<UserValidationType, IValidator<User>>>(context =>
@@ -85,6 +102,7 @@ namespace GUI
             });
 
             builder.RegisterType<DtoMapper>().As<IDtoMapper>().InstancePerLifetimeScope();
+
         }
     }
 }

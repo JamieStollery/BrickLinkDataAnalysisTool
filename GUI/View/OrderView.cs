@@ -1,12 +1,9 @@
-﻿using System;
+﻿using Presentation.View.Interface;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using Presentation.View.Interface;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace GUI.View
 {
@@ -17,37 +14,47 @@ namespace GUI.View
             InitializeComponent();
             Dock = DockStyle.Fill;
         }
+        
+        // get/set
+        public IEnumerable<string> ItemTypes
+        {
+            get => clbItemTypes.CheckedItems.Cast<string>();
+            set => clbItemTypes.Items.AddRange(value.ToArray());
+        }
 
+        // get
+        public string ItemCondition => cbItemCondition.SelectedItem?.ToString();
+
+        public string ItemCountType => cbItemCountType.SelectedItem?.ToString();
+
+        public int ItemCount => int.TryParse(tbItemCount.Text, out var count) ? count : 0;
+
+        public string ItemTypeFilterMode => fmsItemTypes.SelectedMode;
+
+        public string ItemConditionFilterMode => fmsItemCondition.SelectedMode;
+
+        public string ItemCountTypeFilterMode => fmsItemCount.SelectedMode;
+
+        // set
         public Action OnSearchButtonClick { set => btnSearch.Click += (sender, e) => value(); }
+
         public Action OnFilterChanged
         {
             set
             {
                 fmsItemTypes.OnModeChanged = value;
                 fmsItemCondition.OnModeChanged = value;
+                fmsItemCount.OnModeChanged = value;
                 clbItemTypes.SelectedValueChanged += (sender, e) => value();
                 cbItemCondition.SelectedValueChanged += (sender, e) => value();
+                cbItemCountType.SelectedValueChanged += (sender, e) => value();
+                tbItemCount.TextChanged += (sender, e) => value();
             }
         }
+
         public Action<int> OnOrderDoubleClick { set => dgvOrders.CellDoubleClick += (sender, e) => value(int.Parse(dgvOrders.Rows[e.RowIndex].Cells[0].Value.ToString())); }
 
-        public IEnumerable<string> ItemTypes
-        {
-            get => clbItemTypes.CheckedItems.Cast<string>();
-            set
-            {
-                clbItemTypes.Items.AddRange(value.ToArray());
-                clbItemTypes.MinimumSize = new Size(0, (clbItemTypes.Items.Count + 1) * clbItemTypes.GetItemHeight(0));
-            }
-        }
-
         public IEnumerable<object> Orders { set => dgvOrders.DataSource = value; }
-
-        public string ItemTypeFilterMode => fmsItemTypes.SelectedMode;
-
-        public string ItemConditionFilterMode => fmsItemCondition.SelectedMode;
-
-        public string ItemCondition => cbItemCondition.SelectedItem?.ToString();
 
         public IEnumerable<string> ItemConditions
         {
@@ -55,6 +62,15 @@ namespace GUI.View
             {
                 cbItemCondition.Items.AddRange(value.ToArray());
                 cbItemCondition.SelectedIndex = 0;
+            }
+        }
+
+        public IEnumerable<string> ItemCountTypes
+        {
+            set
+            {
+                cbItemCountType.Items.AddRange(value.ToArray());
+                cbItemCountType.SelectedIndex = 0;
             }
         }
     }

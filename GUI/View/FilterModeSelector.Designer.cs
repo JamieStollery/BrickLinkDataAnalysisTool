@@ -28,43 +28,43 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.rbAny = new System.Windows.Forms.RadioButton();
-            this.rbAll = new System.Windows.Forms.RadioButton();
+            this.rb1 = new System.Windows.Forms.RadioButton();
+            this.rb2 = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
-            // rbAny
+            // rb1
             // 
-            this.rbAny.AutoSize = true;
-            this.rbAny.Checked = true;
-            this.rbAny.Location = new System.Drawing.Point(0, 0);
-            this.rbAny.Name = "rbAny";
-            this.rbAny.Size = new System.Drawing.Size(46, 19);
-            this.rbAny.TabIndex = 0;
-            this.rbAny.TabStop = true;
-            this.rbAny.Text = "Any";
-            this.rbAny.UseVisualStyleBackColor = true;
+            this.rb1.AutoSize = true;
+            this.rb1.Checked = true;
+            this.rb1.Location = new System.Drawing.Point(0, 0);
+            this.rb1.Name = "rb1";
+            this.rb1.Size = new System.Drawing.Size(40, 19);
+            this.rb1.TabIndex = 0;
+            this.rb1.TabStop = true;
+            this.rb1.Text = "___";
+            this.rb1.UseVisualStyleBackColor = true;
             // 
-            // rbAll
+            // rb2
             // 
-            this.rbAll.AutoSize = true;
-            this.rbAll.Location = new System.Drawing.Point(52, 0);
-            this.rbAll.Name = "rbAll";
-            this.rbAll.Size = new System.Drawing.Size(39, 19);
-            this.rbAll.TabIndex = 1;
-            this.rbAll.TabStop = true;
-            this.rbAll.Text = "All";
-            this.rbAll.UseVisualStyleBackColor = true;
+            this.rb2.AutoSize = true;
+            this.rb2.Location = new System.Drawing.Point(52, 0);
+            this.rb2.Name = "rb2";
+            this.rb2.Size = new System.Drawing.Size(40, 19);
+            this.rb2.TabIndex = 1;
+            this.rb2.TabStop = true;
+            this.rb2.Text = "___";
+            this.rb2.UseVisualStyleBackColor = true;
             // 
             // FilterModeSelector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.rbAll);
-            this.Controls.Add(this.rbAny);
-            this.MaximumSize = new System.Drawing.Size(90, 20);
-            this.MinimumSize = new System.Drawing.Size(90, 20);
+            this.Controls.Add(this.rb2);
+            this.Controls.Add(this.rb1);
+            this.MaximumSize = new System.Drawing.Size(100, 20);
+            this.MinimumSize = new System.Drawing.Size(100, 20);
             this.Name = "FilterModeSelector";
-            this.Size = new System.Drawing.Size(90, 20);
+            this.Size = new System.Drawing.Size(100, 20);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -72,7 +72,7 @@
 
         #endregion
 
-        private System.Windows.Forms.RadioButton rbAny;
-        private System.Windows.Forms.RadioButton rbAll;
+        private System.Windows.Forms.RadioButton rb1;
+        private System.Windows.Forms.RadioButton rb2;
     }
 }

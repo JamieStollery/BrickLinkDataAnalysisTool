@@ -4,12 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Presentation.Filtering
+namespace Presentation.Filtering.AnyAll
 {
-    public class FilterAllStrategy : IFilterModeStrategy
+    public class FilterAllStrategy : IAnyAllFilterModeStrategy
     {
-        public FilterMode Mode => FilterMode.All;
-
         public IEnumerable<Order> Filter(IEnumerable<Order> orders, Func<Item, bool> predicate) => orders.Where(order => order.Items.All(predicate));
     }
 }

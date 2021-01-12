@@ -3,11 +3,10 @@ using Presentation.Model.Orders;
 using System;
 using System.Collections.Generic;
 
-namespace Presentation.Filtering
+namespace Presentation.Filtering.AnyAll
 {
-    public interface IFilterModeStrategy
+    public interface IAnyAllFilterModeStrategy
     {
-        FilterMode Mode { get; }
         IEnumerable<Order> Filter(IEnumerable<Order> orders, Func<Item, bool> predicate);
     }
 }
