@@ -26,7 +26,7 @@ namespace Data.IoC
 
             builder.RegisterType<UserRepository>().As<ILoginRepository>().As<IRegisterRepository>().WithParameter(ResolvedParameter.ForKeyed<IDbConnection>(Database.Users)).InstancePerLifetimeScope();
 
-            builder.RegisterType<BrickLinkAPI.OrderRepository>().As<IOrderRepository>().Keyed<IOrderRepository>(DataMode.API).InstancePerLifetimeScope();
+            builder.RegisterType<BrickLinkAPI.OrderRepository>().As<IOrderRepository>().As<IItemImageRepository>().Keyed<IOrderRepository>(DataMode.API).InstancePerLifetimeScope();
             builder.RegisterType<LocalDB.OrderRepository>().As<IOrderRepository>().Keyed<IOrderRepository>(DataMode.Database).InstancePerLifetimeScope();
             builder.Register<Func<DataMode, IOrderRepository>>(context =>
             {

@@ -65,11 +65,13 @@ namespace GUI
 
             builder.RegisterType<OrderPresenter>();
             builder.RegisterType<OrderView>().As<IOrderView>();
+
+            builder.RegisterType<ItemPresenter>();
             builder.RegisterType<ItemView>().As<IItemView>();
-            builder.Register<Func<IReadOnlyList<Item>, IItemView>>(context =>
+            builder.Register<Func<IReadOnlyList<Item>, ItemPresenter>>(context =>
             {
                 var cc = context.Resolve<IComponentContext>();
-                return items => cc.Resolve<IItemView>(TypedParameter.From<IReadOnlyList<object>>(items));
+                return items => cc.Resolve<ItemPresenter>(TypedParameter.From(items));
             });
 
             // Register any/all filter mode strategies
@@ -102,7 +104,7 @@ namespace GUI
             });
 
             builder.RegisterType<DtoMapper>().As<IDtoMapper>().InstancePerLifetimeScope();
-
+            builder.RegisterType<VmMapper>().As<IVmMapper>().InstancePerLifetimeScope();
         }
     }
 }

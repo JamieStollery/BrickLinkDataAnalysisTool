@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Presentation.View.Interface;
+using Presentation.View.Model;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Text;
+using System.Linq;
 using System.Windows.Forms;
-using Presentation.View.Interface;
 
 namespace GUI.View
 {
@@ -17,11 +16,16 @@ namespace GUI.View
             Dock = DockStyle.Fill;
         }
 
-        public ItemView(IReadOnlyList<object> items) : this()
+        public void RePaintItem(string number, int inventoryId)
         {
-            dgvItems.DataSource = items;
+            var rowIndex = dgvItems.Rows.Cast<DataGridViewRow>().Single(row => 
+                row.Cells[nameof(ItemVm.Number)].Value.ToString() == number &&
+                int.Parse(row.Cells[nameof(ItemVm.InventoryId)].Value.ToString()) == inventoryId).Index;
+            dgvItems.InvalidateRow(rowIndex);
         }
 
+        public Action OnViewOpened { set => Load += (sender, e) => value(); }
         public Action OnBackButtonClick { set => btnBack.Click += (sender, e) => value(); }
+        public IEnumerable<object> Items { set => dgvItems.DataSource = value; }
     }
 }

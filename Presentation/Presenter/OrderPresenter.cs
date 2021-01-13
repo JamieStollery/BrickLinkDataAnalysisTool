@@ -9,6 +9,7 @@ using Presentation.Model.Mapping;
 using Presentation.Model.Orders;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
+using Presentation.View.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,31 +20,33 @@ namespace Presentation.Presenter
     public partial class OrderPresenter : IPresenter
     {
         private readonly IOrderView _orderView;
-        private readonly Func<IReadOnlyList<Item>, IItemView> _itemViewFactory;
+        private readonly Func<IReadOnlyList<ItemVm>, ItemPresenter> _itemPresenterFactory;
         private readonly MainStagePresenter _stagePresenter;
         // Maybe this factory does not need the DataMode parameter if it can be resolved from the MainStagePresenter
         private readonly Func<DataMode, IOrderRepository> _repositoryFactory;
         private readonly Func<AnyAllFilterMode, IAnyAllFilterModeStrategy> _anyAllFilterModeStrategyFactory;
         private readonly Func<ItemCountType, MinMaxFilterMode, IMinMaxFilterModeStrategy> _minMaxFilterModeStrategyFactory;
-        private readonly IDtoMapper _mapper;
+        private readonly IDtoMapper _dtoMapper;
+        private readonly IVmMapper _vmMapper;
 
         private IReadOnlyList<Order> _orders;
 
-        public OrderPresenter(IOrderView orderView, Func<IReadOnlyList<Item>, IItemView> itemViewFactory, MainStagePresenter stagePresenter, Func<DataMode, IOrderRepository> repositoryFactory,
-            Func<AnyAllFilterMode, IAnyAllFilterModeStrategy> anyAllFilterModeStrategyFactory, Func<ItemCountType, MinMaxFilterMode, IMinMaxFilterModeStrategy> minMaxFilterModeStrategyFactory, IDtoMapper mapper)
+        public OrderPresenter(IOrderView orderView, Func<IReadOnlyList<ItemVm>, ItemPresenter> itemPresenterFactory, MainStagePresenter stagePresenter, Func<DataMode, IOrderRepository> repositoryFactory,
+            Func<AnyAllFilterMode, IAnyAllFilterModeStrategy> anyAllFilterModeStrategyFactory, Func<ItemCountType, MinMaxFilterMode, IMinMaxFilterModeStrategy> minMaxFilterModeStrategyFactory, IDtoMapper dtoMapper, IVmMapper vmMapper)
         {
             _orderView = orderView;
-            _itemViewFactory = (items) =>
-            { 
-                var itemView = itemViewFactory(items);
-                itemView.OnBackButtonClick = () => OpenView();
-                return itemView;
+            _itemPresenterFactory = (items) =>
+            {
+                var presenter = itemPresenterFactory(items);
+                presenter.BackToOrderView = () => OpenView();
+                return presenter;
             };
             _stagePresenter = stagePresenter;
             _repositoryFactory = repositoryFactory;
             _anyAllFilterModeStrategyFactory = anyAllFilterModeStrategyFactory;
             _minMaxFilterModeStrategyFactory = minMaxFilterModeStrategyFactory;
-            _mapper = mapper;
+            _dtoMapper = dtoMapper;
+            _vmMapper = vmMapper;
 
             _orderView.OnSearchButtonClick = () => Search();
             _orderView.OnFilterChanged = () => FilterOrders();
@@ -64,13 +67,13 @@ namespace Presentation.Presenter
 
         public void OpenView() => _stagePresenter.OpenView(_orderView);
 
-        private void OpenItemView(int orderId) => _stagePresenter.OpenView(_itemViewFactory(_orders.Single(order => order.Id == orderId).Items.ToList()));
+        private void OpenItemView(int orderId) => _itemPresenterFactory(_orders.Single(order => order.Id == orderId).Items.Select(item => _vmMapper.Map(item)).ToList()).OpenView();
 
         private async void Search()
         {
             var orderDtos = await _repositoryFactory(_stagePresenter.DataMode).GetOrders();
 
-            var tasks = orderDtos.Select(async orderDto => _mapper.Map(orderDto, await _repositoryFactory(_stagePresenter.DataMode).GetItems(orderDto.Order_id)));
+            var tasks = orderDtos.Select(async orderDto => _dtoMapper.Map(orderDto, await _repositoryFactory(_stagePresenter.DataMode).GetItems(orderDto.Order_id)));
 
             _orders = await Task.WhenAll(tasks.ToList());
 
