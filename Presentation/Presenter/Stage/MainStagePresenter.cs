@@ -28,7 +28,7 @@ namespace Presentation.Presenter.Stage
             _view.OnLoginClick = () => OpenLoginView();
             _view.OnRegisterClick = () => OpenRegisterView();
 
-            DataMode = DataMode.Database;
+            DataMode = DataMode.API;
         }
 
         public DataMode DataMode { get; private set; }
@@ -44,6 +44,11 @@ namespace Presentation.Presenter.Stage
             //OpenLoginView();
             _user.Username = "JamieStollery";
             _user.Password = "test";
+            _user.ConsumerKey = "F79394C3989A4A35A94B4ECC82B1B08C";
+            _user.ConsumerSecret = "AD2C9F5A38584B68A38F2EEE7AF35E62";
+            _user.TokenValue = "594B505FC34B427EBB22AE05843C969E";
+            _user.TokenSecret = "CD49808C7FC442AF8EB303317ADABDAF";
+
             UpdateStage();
         }
 

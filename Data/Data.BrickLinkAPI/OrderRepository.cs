@@ -1,31 +1,76 @@
 ﻿using Data.Common.Model.Dto;
 using Data.Common.Repository.Interface;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Data.BrickLinkAPI
 {
-    public class OrderRepository : IOrderRepository, IItemImageRepository
+    public class OrderRepository : IOrderRepository
     {
-        public Task<IEnumerable<OrderDto>> GetOrders()
+        private readonly BrickLinkRequestFactory _requestFactory;
+
+        public OrderRepository(BrickLinkRequestFactory requestFactory)
         {
-            throw new NotImplementedException();
+            _requestFactory = requestFactory;
         }
 
-        public Task<IEnumerable<OrderItemDto>> GetItems(int orderId)
+        public async Task<IEnumerable<OrderDto>> GetOrders()
         {
-            throw new NotImplementedException();
+            var url = $"{_requestFactory.UrlPrefix}orders?status=-purged";
+            var request = _requestFactory.Create(url);
+
+            var response = await request.GetResponseAsync();
+
+            JObject json = null;
+            using (var stream = response.GetResponseStream())
+            {
+                var reader = new StreamReader(stream, Encoding.UTF8);
+                string jsonString = reader.ReadToEnd();
+                json = JObject.Parse(jsonString);
+            }
+
+            var meta = json.SelectToken("meta");
+            if (meta.Value<int>("code") == 200)
+            {
+                return json.SelectToken("data").Select(token => token.ToObject<OrderDto>());
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
-        public async Task<Stream> GetItemImage(string type, string no, int colorId)
+        public async Task<IEnumerable<OrderItemDto>> GetItems(int orderId)
         {
-            var request = (HttpWebRequest)WebRequest.Create("http://img.bricklink.com/P/5/3832.jpg");
-            request.Method = "GET";
-            var response = request.GetResponse();
-            return response.GetResponseStream();
+            var url = $"{_requestFactory.UrlPrefix}orders/{orderId}/items";
+            var request = _requestFactory.Create(url);
+
+            var response = await request.GetResponseAsync();
+
+            JObject json = null;
+            using (var stream = response.GetResponseStream())
+            {
+                var reader = new StreamReader(stream, Encoding.UTF8);
+                string jsonString = reader.ReadToEnd();
+                json = JObject.Parse(jsonString);
+            }
+
+            var meta = json.SelectToken("meta");
+            if (meta.Value<int>("code") == 200)
+            {
+                return json.SelectToken("data").SelectMany(token => token.Select(token => token.ToObject<OrderItemDto>()));
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
+
     }
 }

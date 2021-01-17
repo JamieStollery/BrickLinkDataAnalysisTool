@@ -1,13 +1,16 @@
 ﻿using Autofac;
 using Autofac.Core;
+using Data.BrickLinkAPI;
 using Data.Common;
 using Data.Common.Model;
 using Data.Common.Repository.Interface;
 using Data.LocalDB;
+using OAuth;
 using System;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
+using System.Net;
 
 namespace Data.IoC
 {
@@ -26,7 +29,11 @@ namespace Data.IoC
 
             builder.RegisterType<UserRepository>().As<ILoginRepository>().As<IRegisterRepository>().WithParameter(ResolvedParameter.ForKeyed<IDbConnection>(Database.Users)).InstancePerLifetimeScope();
 
-            builder.RegisterType<BrickLinkAPI.OrderRepository>().As<IOrderRepository>().As<IItemImageRepository>().Keyed<IOrderRepository>(DataMode.API).InstancePerLifetimeScope();
+            builder.RegisterType<BrickLinkRequestFactory>().SingleInstance();
+
+            builder.RegisterType<ItemImageRepository>().As<IItemImageRepository>().InstancePerLifetimeScope();
+
+            builder.RegisterType<BrickLinkAPI.OrderRepository>().As<IOrderRepository>().Keyed<IOrderRepository>(DataMode.API).InstancePerLifetimeScope();
             builder.RegisterType<LocalDB.OrderRepository>().As<IOrderRepository>().Keyed<IOrderRepository>(DataMode.Database).InstancePerLifetimeScope();
             builder.Register<Func<DataMode, IOrderRepository>>(context =>
             {
@@ -34,6 +41,7 @@ namespace Data.IoC
                 return mode => mode == DataMode.Database ? cc.ResolveKeyed<IOrderRepository>(mode, ResolvedParameter.ForKeyed<IDbConnection>(Database.Orders)) : cc.ResolveKeyed<IOrderRepository>(mode);
             });
         }
+
         private enum Database
         {
             Users,
