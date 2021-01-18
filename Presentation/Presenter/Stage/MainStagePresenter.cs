@@ -10,9 +10,9 @@ namespace Presentation.Presenter.Stage
         private readonly IMainStageView _view;
         private readonly User _user;
         private readonly Func<ChildStageViewType, ChildStagePresenter> _stagePresenterFactory;
-        private readonly Func<OrderPresenter> _orderPresenterFactory;
+        private readonly Func<IPresenter> _orderPresenterFactory;
 
-        public MainStagePresenter(IMainStageView view, User user, Func<ChildStageViewType, ChildStagePresenter> stagePresenterFactory, Func<OrderPresenter> orderPresenterFactory) : base(view)
+        public MainStagePresenter(IMainStageView view, User user, Func<ChildStageViewType, ChildStagePresenter> stagePresenterFactory, Func<IPresenter> orderPresenterFactory) : base(view)
         {
             _view = view;
             _user = user;
