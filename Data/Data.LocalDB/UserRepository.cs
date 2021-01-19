@@ -1,18 +1,17 @@
-﻿using Dapper;
+﻿using Data.Common;
 using Data.Common.Model;
 using Data.Common.Repository.Interface;
-using System.Data;
 using System.Threading.Tasks;
 
 namespace Data.LocalDB
 {
     public class UserRepository : ILoginRepository, IRegisterRepository
     {
-        private readonly IDbConnection _connection;
+        private readonly IDapperWrapper _dapperWrapper;
 
-        public UserRepository(IDbConnection connection)
+        public UserRepository(IDapperWrapper dapperWrapper)
         {
-            _connection = connection;
+            _dapperWrapper = dapperWrapper;
         }
 
         public async Task<bool> Login(User user)
@@ -22,7 +21,7 @@ namespace Data.LocalDB
                         WHERE Username = @Username
                         AND Password = @Password";
 
-            return await _connection.QuerySingleAsync<bool>(sql, new { user.Username, user.Password });
+            return await _dapperWrapper.QuerySingleAsync<bool>(sql, new { user.Username, user.Password });
         }
 
         public async Task<bool> Register(User user)
@@ -31,7 +30,7 @@ namespace Data.LocalDB
                         VALUES(@Username, @Password, @ConsumerKey, @ConsumerSecret, @TokenValue, @TokenSecret)";
             try
             {
-                await _connection.ExecuteAsync(sql, new { user.Username, user.Password, user.ConsumerKey, user.ConsumerSecret, user.TokenValue, user.TokenSecret });
+                await _dapperWrapper.ExecuteAsync(sql, new { user.Username, user.Password, user.ConsumerKey, user.ConsumerSecret, user.TokenValue, user.TokenSecret });
             }
             catch
             {

@@ -22,12 +22,15 @@ namespace Data.IoC
 
             var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var usersConnectionString = $"Data Source={Path.Combine(folderPath, "Users.db3")};Version=3;";
-            var ordersConnectionString = $"Data Source={Path.Combine(folderPath, "BrickLink.db3")};Version=3;";
+            var ordersConnectionString = $"Data Source={Path.Combine(folderPath, "Test.db3")};Version=3;";
 
             builder.RegisterInstance<IDbConnection>(new SQLiteConnection(usersConnectionString)).Keyed<IDbConnection>(Database.Users).SingleInstance();
             builder.RegisterInstance<IDbConnection>(new SQLiteConnection(ordersConnectionString)).Keyed<IDbConnection>(Database.Orders).SingleInstance();
 
-            builder.RegisterType<UserRepository>().As<ILoginRepository>().As<IRegisterRepository>().WithParameter(ResolvedParameter.ForKeyed<IDbConnection>(Database.Users)).InstancePerLifetimeScope();
+            builder.RegisterType<DapperWrapper>().As<IDapperWrapper>().WithParameter(ResolvedParameter.ForKeyed<IDbConnection>(Database.Orders)).Keyed<IDapperWrapper>(Database.Orders).InstancePerLifetimeScope();
+            builder.RegisterType<DapperWrapper>().As<IDapperWrapper>().WithParameter(ResolvedParameter.ForKeyed<IDbConnection>(Database.Users)).Keyed<IDapperWrapper>(Database.Users).InstancePerLifetimeScope();
+
+            builder.RegisterType<UserRepository>().As<ILoginRepository>().As<IRegisterRepository>().WithParameter(ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Users)).InstancePerLifetimeScope();
 
             builder.RegisterType<BrickLinkRequestFactory>().SingleInstance();
 
@@ -38,8 +41,15 @@ namespace Data.IoC
             builder.Register<Func<DataMode, IOrderRepository>>(context =>
             {
                 var cc = context.Resolve<IComponentContext>();
-                return mode => mode == DataMode.Database ? cc.ResolveKeyed<IOrderRepository>(mode, ResolvedParameter.ForKeyed<IDbConnection>(Database.Orders)) : cc.ResolveKeyed<IOrderRepository>(mode);
+                return mode => mode == DataMode.Database ? cc.ResolveKeyed<IOrderRepository>(mode, ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Orders)) : cc.ResolveKeyed<IOrderRepository>(mode);
             });
+
+
+            builder.RegisterType<DatabaseUpdater>().As<IDatabaseUpdater>()
+                .WithParameters(new[]{
+                    ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Orders),
+                    ResolvedParameter.ForKeyed<IOrderRepository>(DataMode.API)
+                }).InstancePerLifetimeScope();
         }
 
         private enum Database

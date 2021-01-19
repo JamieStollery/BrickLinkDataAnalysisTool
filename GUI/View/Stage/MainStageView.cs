@@ -17,10 +17,38 @@ namespace GUI.View.Stage
         public Action OnLogoutClick { set => miLogout.Click += (sender, e) => value(); }
         public Action OnLoginClick { set => miLogin.Click += (sender, e) => value(); }
         public Action OnRegisterClick { set => miRegister.Click += (sender, e) => value(); }
+        public Action OnChangeDataModeClick { set => miChangeDataMode.Click += (sender, e) => value(); }
+        public Action OnUpdateDatabaseClick { set => miUpdateDatabase.Click += (sender, e) => value(); }
+        public Action OnClearDatabaseClick { set => miClearDatabase.Click += (sender, e) => value(); }
         public bool LogoutEnabled { set => miLogout.Enabled = value; }
         public bool LoginEnabled { set => miLogin.Enabled = value; }
         public bool RegisterEnabled { set => miRegister.Enabled = value; }
-        public string Username { set => tbUsername.Text = value; }
+        public bool DatabaseControlsEnabled { set => miDatabase.Enabled = value; }
+        public string Username
+        {
+            set
+            {
+                tbUsername.Text = $"Username: {value}";
+                tbUsername.Size = TextRenderer.MeasureText(tbUsername.Text, tbUsername.Font);
+            }
+        }
+        public string DataMode
+        {
+            set
+            {
+                tbDataMode.Text = $"Data Mode: {value}";
+                tbDataMode.Size = TextRenderer.MeasureText(tbDataMode.Text, tbDataMode.Font);
+            }
+        }
+        public string Status { set => lblTaskLabel.Text = value; }
+        public int ProgressBarLength { set => pbTaskProgress.Maximum = value; }
+
+        public int ProgressBarProgress
+        {
+            get => pbTaskProgress.Value;
+            set => pbTaskProgress.Value = value;
+        }
+
 
         public void OpenStage() => Show();
 

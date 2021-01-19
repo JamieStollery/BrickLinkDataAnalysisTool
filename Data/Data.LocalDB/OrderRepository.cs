@@ -1,21 +1,18 @@
-﻿using Dapper;
+﻿using Data.Common;
 using Data.Common.Model.Dto;
 using Data.Common.Repository.Interface;
-using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Data.LocalDB
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly IDbConnection _connection;
+        private readonly IDapperWrapper _dapperWrapper;
 
-        public OrderRepository(IDbConnection connection)
+        public OrderRepository(IDapperWrapper dapperWrapper)
         {
-            _connection = connection;
+            _dapperWrapper = dapperWrapper;
         }
 
         public async Task<IEnumerable<OrderDto>> GetOrders()
@@ -24,7 +21,7 @@ namespace Data.LocalDB
                         INNER JOIN Payments AS p ON o.Order_id = p.Order_id
                         INNER JOIN Costs AS c ON o.Order_id = c.Order_id";
 
-            return await _connection.QueryAsync<OrderDto, PaymentDto, CostDto, OrderDto>(sql,
+            return await _dapperWrapper.QueryAsync<OrderDto, PaymentDto, CostDto, OrderDto>(sql,
                 (order, payment, cost) =>
                 {
                     order.Payment = payment;
@@ -40,7 +37,7 @@ namespace Data.LocalDB
                         INNER JOIN Items AS i ON oi.Item_no = i.No
                         WHERE oi.Order_id = @Order_Id";
 
-            return await _connection.QueryAsync<OrderItemDto, ItemDto, OrderItemDto>(sql,
+            return await _dapperWrapper.QueryAsync<OrderItemDto, ItemDto, OrderItemDto>(sql,
                 (orderItem, item) =>
                 {
                     orderItem.Item = item;
