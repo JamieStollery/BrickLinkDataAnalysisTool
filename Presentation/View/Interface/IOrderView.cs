@@ -7,13 +7,17 @@ namespace Presentation.View.Interface
     {
         // get/set
         IEnumerable<string> ItemTypes { get; set; }
+        IEnumerable<string> OrderStatuses { get; set; }
         // get
         string ItemCondition { get; }
         string ItemCountType { get; }
         int ItemCount { get; }
+        string OrderSearchType { get; }
+        string OrderSearchValue { get; }
         string ItemTypeFilterMode { get; }
         string ItemConditionFilterMode { get; }
         string ItemCountTypeFilterMode { get; }
+        string OrderSearchFilterMode { get; }
         // set
         Action OnSearchButtonClick { set; }
         Action OnFilterChanged { set; }
@@ -21,5 +25,6 @@ namespace Presentation.View.Interface
         IEnumerable<object> Orders { set; }
         IEnumerable<string> ItemConditions { set; }
         IEnumerable<string> ItemCountTypes { set; }
+        IEnumerable<string> OrderSearchTypes { set; }
     }
 }

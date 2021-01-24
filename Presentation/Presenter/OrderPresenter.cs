@@ -3,6 +3,7 @@ using Data.Common.Repository.Interface;
 using Presentation.Filtering;
 using Presentation.Filtering.AnyAll;
 using Presentation.Filtering.MinMax;
+using Presentation.Filtering.StrictLoose;
 using Presentation.Model;
 using Presentation.Model.Items;
 using Presentation.Model.Mapping;
@@ -24,46 +25,47 @@ namespace Presentation.Presenter
         private readonly MainStagePresenter _stagePresenter;
         // Maybe this factory does not need the DataMode parameter if it can be resolved from the MainStagePresenter
         private readonly Func<DataMode, IOrderRepository> _repositoryFactory;
-        private readonly Func<AnyAllFilterMode, IAnyAllFilterModeStrategy> _anyAllFilterModeStrategyFactory;
-        private readonly Func<ItemCountType, MinMaxFilterMode, IMinMaxFilterModeStrategy> _minMaxFilterModeStrategyFactory;
         private readonly IDtoMapper _dtoMapper;
         private readonly IVmMapper _vmMapper;
-
+        private readonly IOrderFilterer _orderFilterer;
         private IReadOnlyList<Order> _orders;
 
-        public OrderPresenter(IOrderView orderView, Func<IReadOnlyList<ItemVm>, ItemPresenter> itemPresenterFactory, MainStagePresenter stagePresenter, Func<DataMode, IOrderRepository> repositoryFactory,
-            Func<AnyAllFilterMode, IAnyAllFilterModeStrategy> anyAllFilterModeStrategyFactory, Func<ItemCountType, MinMaxFilterMode, IMinMaxFilterModeStrategy> minMaxFilterModeStrategyFactory, IDtoMapper dtoMapper, IVmMapper vmMapper)
+        public OrderPresenter(IOrderView orderView, Func<IReadOnlyList<ItemVm>, ItemPresenter> itemPresenterFactory, MainStagePresenter stagePresenter,
+            Func<DataMode, IOrderRepository> repositoryFactory, IDtoMapper dtoMapper, IVmMapper vmMapper, IOrderFilterer orderFilterer)
         {
             _orderView = orderView;
             _itemPresenterFactory = (items) =>
             {
                 var presenter = itemPresenterFactory(items);
-                presenter.BackToOrderView = () => OpenView();
+                presenter.BackToOrderView = OpenView;
                 return presenter;
             };
             _stagePresenter = stagePresenter;
             _repositoryFactory = repositoryFactory;
-            _anyAllFilterModeStrategyFactory = anyAllFilterModeStrategyFactory;
-            _minMaxFilterModeStrategyFactory = minMaxFilterModeStrategyFactory;
             _dtoMapper = dtoMapper;
             _vmMapper = vmMapper;
+            _orderFilterer = orderFilterer;
 
-            _orderView.OnSearchButtonClick = () => Search();
-            _orderView.OnFilterChanged = () => FilterOrders();
-            _orderView.OnOrderDoubleClick = (id) => OpenItemView(id);
+            _orderView.OnSearchButtonClick = Search;
+            _orderView.OnFilterChanged = FilterOrders;
+            _orderView.OnOrderDoubleClick = OpenItemView;
 
             _orderView.ItemTypes = Enum.GetNames(typeof(ItemType));
             var itemConditions = new List<string>() { "Any" };
             itemConditions.AddRange(Enum.GetNames(typeof(ItemCondition)));
             _orderView.ItemConditions = itemConditions;
-            _orderView.ItemCountTypes = Enum.GetNames(typeof(ItemCountType));
+            _orderView.ItemCountTypes = new List<string>()
+            {
+                nameof(Order.TotalCount),
+                nameof(Order.UniqueCount)
+            };
+            _orderView.OrderStatuses = Enum.GetNames(typeof(OrderStatus));
+            _orderView.OrderSearchTypes = new List<string>()
+            {
+                nameof(Order.Id),
+                nameof(Order.BuyerName)
+            };
         }
-
-        private IEnumerable<ItemType> ItemTypes => _orderView.ItemTypes.Select(type => Enum.Parse<ItemType>(type));
-        private ItemCondition? ItemCondition => Enum.TryParse(_orderView.ItemCondition, out ItemCondition itemCondition) ? itemCondition : null as ItemCondition?;
-        private IAnyAllFilterModeStrategy ItemTypeFilterModeStrategy => _anyAllFilterModeStrategyFactory(Enum.Parse<AnyAllFilterMode>(_orderView.ItemTypeFilterMode));
-        private IAnyAllFilterModeStrategy ItemConditionFilterModeStrategy => _anyAllFilterModeStrategyFactory(Enum.Parse<AnyAllFilterMode>(_orderView.ItemConditionFilterMode));
-        private IMinMaxFilterModeStrategy ItemCountFilterModeStrategy => _minMaxFilterModeStrategyFactory(Enum.Parse<ItemCountType>(_orderView.ItemCountType), Enum.Parse<MinMaxFilterMode>(_orderView.ItemCountTypeFilterMode));
 
         public void OpenView() => _stagePresenter.OpenView(_orderView);
 
@@ -83,24 +85,36 @@ namespace Presentation.Presenter
         private void FilterOrders()
         {
             if (_orders == null) return;
-            IEnumerable<Order> filteredOrders = new List<Order>(_orders);
+            IReadOnlyList<Order> filteredOrders = new List<Order>(_orders);
 
-            // Filter orders by item type
-            if(ItemTypes.Count() != 0)
-            {
-                filteredOrders = ItemTypeFilterModeStrategy.Filter(filteredOrders, item => ItemTypes.Contains(item.Type));
-            }
-
-            // Filter orders by item condition
-            if (ItemCondition != null)
-            {
-                filteredOrders = ItemConditionFilterModeStrategy.Filter(filteredOrders, item => item.Condition == ItemCondition);
-            }
-
-            // Filter orders by item count
-            filteredOrders = ItemCountFilterModeStrategy.Filter(filteredOrders, _orderView.ItemCount);
+            filteredOrders = _orderFilterer.FilterByOrderStatus(filteredOrders, ToListOfEnum<OrderStatus>(_orderView.OrderStatuses));
+            filteredOrders = _orderFilterer.FilterByItemType(filteredOrders, ToListOfEnum<ItemType>(_orderView.ItemTypes), ToNullableEnum<AnyAllFilterMode>(_orderView.ItemTypeFilterMode));
+            filteredOrders = _orderFilterer.FilterByItemCondition(filteredOrders, ToNullableEnum<ItemCondition>(_orderView.ItemCondition), ToNullableEnum<AnyAllFilterMode>(_orderView.ItemConditionFilterMode));
+            filteredOrders = _orderFilterer.FilterByItemCount(filteredOrders, _orderView.ItemCount, _orderView.ItemCountType, ToNullableEnum<MinMaxFilterMode>(_orderView.ItemCountTypeFilterMode));
+            filteredOrders = _orderFilterer.FilterByOrderSearch(filteredOrders, _orderView.OrderSearchValue, _orderView.OrderSearchType, ToNullableEnum<StrictLooseFilterMode>(_orderView.OrderSearchFilterMode));
 
             _orderView.Orders = filteredOrders.ToList();
+
+            static TEnum? ToNullableEnum<TEnum>(string value) where TEnum : struct
+            {
+                return Enum.TryParse(value, out TEnum result) ? result : null as TEnum?;
+            }
+            
+            static IReadOnlyList<TEnum> ToListOfEnum<TEnum>(IEnumerable<string> values) where TEnum : struct
+            {
+                return ToEnums(values)?.ToList();
+
+                static IEnumerable<TEnum> ToEnums(IEnumerable<string> values)
+                {
+                    foreach (var value in values)
+                    {
+                        if (Enum.TryParse<TEnum>(value, out var result))
+                        {
+                            yield return result;
+                        }
+                    }
+                }
+            }
         }
     }
 }

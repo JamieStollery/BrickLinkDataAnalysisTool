@@ -12,13 +12,13 @@ namespace GUI.View
             {
                 if (!rb1.Checked) return;
                 rb2.Checked = false;
-                OnModeChanged();
+                OnModeChanged?.Invoke();
             };
             rb2.CheckedChanged += (sender, e) =>
             {
                 if (!rb2.Checked) return;
                 rb1.Checked = false;
-                OnModeChanged();
+                OnModeChanged?.Invoke();
             };
         }
 
@@ -26,36 +26,28 @@ namespace GUI.View
 
         public string SelectedMode => rb2.Checked ? rb2.Text : rb1.Text;
 
-        private bool _useMinMax;
-        public bool UseMinMax
+        public string Mode1Text
         {
-            get => _useMinMax;
-            set 
-            {
-                if(value)
-                {
-                    rb1.Text = "Min";
-                    rb2.Text = "Max";
-                    UseAnyAll = !value;
-                }
-                _useMinMax = value;
-            }
+            get => rb1.Text;
+            set => rb1.Text = value;
         }
 
-        private bool _useAnyAll;
-        public bool UseAnyAll
+        public string Mode2Text
         {
-            get => _useAnyAll;
-            set 
-            {
-                if(value)
-                {
-                    rb1.Text = "Any";
-                    rb2.Text = "All";
-                    UseMinMax = !value;
-                }
-                _useAnyAll = value;
-            }
+            get => rb2.Text;
+            set => rb2.Text = value;
         }
+        
+        public bool Mode1Checked
+        {
+            get => rb1.Checked;
+            set => rb1.Checked = value;
+        }
+        public bool Mode2Checked
+        {
+            get => rb2.Checked;
+            set => rb2.Checked = value;
+        }
+
     }
 }

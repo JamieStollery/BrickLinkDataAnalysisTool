@@ -6,8 +6,10 @@ using FluentValidation;
 using GUI.View;
 using GUI.View.Stage;
 using Presentation;
+using Presentation.Filtering;
 using Presentation.Filtering.AnyAll;
 using Presentation.Filtering.MinMax;
+using Presentation.Filtering.StrictLoose;
 using Presentation.Model;
 using Presentation.Model.Items;
 using Presentation.Model.Mapping;
@@ -151,31 +153,79 @@ namespace GUI
                 builder.RegisterType<VmMapper>().As<IVmMapper>().InstancePerLifetimeScope();
             }
 
-            // Any/All filter strategies
+            // Filtering
             {
-                builder.RegisterType<FilterAnyStrategy>().As<IAnyAllFilterModeStrategy>().Keyed<IAnyAllFilterModeStrategy>(AnyAllFilterMode.Any).InstancePerLifetimeScope();
-                builder.RegisterType<FilterAllStrategy>().As<IAnyAllFilterModeStrategy>().Keyed<IAnyAllFilterModeStrategy>(AnyAllFilterMode.All).InstancePerLifetimeScope();
-                // Register an IAnyAllFilterModeStrategy factory which returns the strategy keyed with the AnyAllFilterMode provided
-                builder.Register<Func<AnyAllFilterMode, IAnyAllFilterModeStrategy>>(context =>
-                {
-                    var cc = context.Resolve<IComponentContext>();
-                    return mode => cc.ResolveKeyed<IAnyAllFilterModeStrategy>(mode);
-                });
-            }
+                builder.RegisterType<OrderFilterer>().As<IOrderFilterer>().InstancePerLifetimeScope();
 
-            // Min/Max filter strategies
-            {
-                builder.RegisterType<ItemCountFilterMaxStrategy>().As<IMinMaxFilterModeStrategy>().Keyed<IMinMaxFilterModeStrategy>(MinMaxFilterMode.Max);
-                builder.RegisterType<ItemCountFilterMinStrategy>().As<IMinMaxFilterModeStrategy>().Keyed<IMinMaxFilterModeStrategy>(MinMaxFilterMode.Min);
-                // Register an IMinMaxFilterModeStrategy factory which returns the strategy keyed with the MinMaxFilterMode provided
-                builder.Register<Func<ItemCountType, MinMaxFilterMode, IMinMaxFilterModeStrategy>>(context =>
+                // Any/All filter strategies
                 {
-                    var cc = context.Resolve<IComponentContext>();
-                    return (countType, mode) => {
-                        Func<Order, int> func = (Order order) => countType == ItemCountType.Total ? order.TotalCount : order.UniqueCount;
-                        return cc.ResolveKeyed<IMinMaxFilterModeStrategy>(mode, TypedParameter.From(func));
-                    };
-                });
+                    builder.RegisterType<FilterAnyStrategy>().As<IAnyAllFilterModeStrategy>().Keyed<IAnyAllFilterModeStrategy>(AnyAllFilterMode.Any).InstancePerLifetimeScope();
+                    builder.RegisterType<FilterAllStrategy>().As<IAnyAllFilterModeStrategy>().Keyed<IAnyAllFilterModeStrategy>(AnyAllFilterMode.All).InstancePerLifetimeScope();
+                    // Register an IAnyAllFilterModeStrategy factory which returns the strategy keyed with the AnyAllFilterMode provided
+                    builder.Register<Func<AnyAllFilterMode, IAnyAllFilterModeStrategy>>(context =>
+                    {
+                        var cc = context.Resolve<IComponentContext>();
+                        return mode => cc.ResolveKeyed<IAnyAllFilterModeStrategy>(mode);
+                    });
+                }
+
+                // Min/Max filter strategies
+                {
+                    builder.RegisterType<ItemCountFilterMaxStrategy>().As<IMinMaxFilterModeStrategy>().Keyed<IMinMaxFilterModeStrategy>(MinMaxFilterMode.Max);
+                    builder.RegisterType<ItemCountFilterMinStrategy>().As<IMinMaxFilterModeStrategy>().Keyed<IMinMaxFilterModeStrategy>(MinMaxFilterMode.Min);
+                    // Register an IMinMaxFilterModeStrategy factory which returns the strategy keyed with the MinMaxFilterMode provided
+                    builder.Register<Func<string, MinMaxFilterMode, IMinMaxFilterModeStrategy>>(context =>
+                    {
+                        var cc = context.Resolve<IComponentContext>();
+                        return (countType, mode) =>
+                        {
+                            Func<Order, int> func = null;
+                            switch(countType)
+                            {
+                                case nameof(Order.TotalCount):
+                                    func = (order) => order.TotalCount;
+                                    break;
+                                case nameof(Order.UniqueCount):
+                                    func = (order) => order.UniqueCount;
+                                    break;
+                            }
+                            if (func != null)
+                            {
+                                return cc.ResolveKeyed<IMinMaxFilterModeStrategy>(mode, TypedParameter.From(func));
+                            }
+                            return null;
+                        };
+                    });
+                }
+
+                // Strict/Loose filter strategies
+                {
+                    builder.RegisterType<OrderSearchFilterStrictStrategy>().As<IStrictLooseFilterModeStrategy>().Keyed<IStrictLooseFilterModeStrategy>(StrictLooseFilterMode.Strict);
+                    builder.RegisterType<OrderSearchFilterLooseStrategy>().As<IStrictLooseFilterModeStrategy>().Keyed<IStrictLooseFilterModeStrategy>(StrictLooseFilterMode.Loose);
+
+                    builder.Register<Func<string, StrictLooseFilterMode, IStrictLooseFilterModeStrategy>>(context =>
+                    {
+                        var cc = context.Resolve<IComponentContext>();
+                        return (searchType, mode) =>
+                        {
+                            Func<Order, string> func = null;
+                            switch (searchType)
+                            {
+                                case nameof(Order.Id):
+                                    func = (order) => order.Id.ToString();
+                                    break;
+                                case nameof(Order.BuyerName):
+                                    func = (order) => order.BuyerName;
+                                    break;
+                            }
+                            if (func != null)
+                            {
+                                return cc.ResolveKeyed<IStrictLooseFilterModeStrategy>(mode, TypedParameter.From(func));
+                            }
+                            return null;
+                        };
+                    });
+                }
             }
         }
     }

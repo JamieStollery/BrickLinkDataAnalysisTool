@@ -22,6 +22,12 @@ namespace GUI.View
             set => clbItemTypes.Items.AddRange(value.ToArray());
         }
 
+        public IEnumerable<string> OrderStatuses
+        {
+            get => clbOrderStatuses.CheckedItems.Cast<string>();
+            set => clbOrderStatuses.Items.AddRange(value.ToArray());
+        }
+
         // get
         public string ItemCondition => cbItemCondition.SelectedItem?.ToString();
 
@@ -29,11 +35,17 @@ namespace GUI.View
 
         public int ItemCount => int.TryParse(tbItemCount.Text, out var count) ? count : 0;
 
+        public string OrderSearchType => cbOrderSearchType.SelectedItem?.ToString();
+
+        public string OrderSearchValue => tbOrderSearchValue.Text;
+
         public string ItemTypeFilterMode => fmsItemTypes.SelectedMode;
 
         public string ItemConditionFilterMode => fmsItemCondition.SelectedMode;
 
         public string ItemCountTypeFilterMode => fmsItemCount.SelectedMode;
+
+        public string OrderSearchFilterMode => fmsOrderSearch.SelectedMode;
 
         // set
         public Action OnSearchButtonClick { set => btnSearch.Click += (sender, e) => value(); }
@@ -45,10 +57,14 @@ namespace GUI.View
                 fmsItemTypes.OnModeChanged = value;
                 fmsItemCondition.OnModeChanged = value;
                 fmsItemCount.OnModeChanged = value;
+                fmsOrderSearch.OnModeChanged = value;
                 clbItemTypes.SelectedValueChanged += (sender, e) => value();
                 cbItemCondition.SelectedValueChanged += (sender, e) => value();
                 cbItemCountType.SelectedValueChanged += (sender, e) => value();
                 tbItemCount.TextChanged += (sender, e) => value();
+                clbOrderStatuses.SelectedValueChanged += (sender, e) => value();
+                tbOrderSearchValue.TextChanged += (sender, e) => value();
+                cbOrderSearchType.SelectedValueChanged += (sender, e) => value();
             }
         }
 
@@ -71,6 +87,15 @@ namespace GUI.View
             {
                 cbItemCountType.Items.AddRange(value.ToArray());
                 cbItemCountType.SelectedIndex = 0;
+            }
+        }
+
+        public IEnumerable<string> OrderSearchTypes 
+        {
+            set
+            {
+                cbOrderSearchType.Items.AddRange(value.ToArray());
+                cbOrderSearchType.SelectedIndex = 0;
             }
         }
     }

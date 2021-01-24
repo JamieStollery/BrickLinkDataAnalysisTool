@@ -31,13 +31,17 @@
             this.btnSearch = new System.Windows.Forms.Button();
             this.clbItemTypes = new System.Windows.Forms.CheckedListBox();
             this.dgvOrders = new System.Windows.Forms.DataGridView();
-            this.fmsItemTypes = new GUI.View.FilterModeSelector();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.fmsItemCondition = new GUI.View.FilterModeSelector();
             this.cbItemCondition = new System.Windows.Forms.ComboBox();
             this.tbItemCount = new System.Windows.Forms.TextBox();
-            this.fmsItemCount = new GUI.View.FilterModeSelector();
             this.cbItemCountType = new System.Windows.Forms.ComboBox();
+            this.clbOrderStatuses = new System.Windows.Forms.CheckedListBox();
+            this.cbOrderSearchType = new System.Windows.Forms.ComboBox();
+            this.tbOrderSearchValue = new System.Windows.Forms.TextBox();
+            this.fmsItemCount = new GUI.View.FilterModeSelector();
+            this.fmsItemCondition = new GUI.View.FilterModeSelector();
+            this.fmsItemTypes = new GUI.View.FilterModeSelector();
+            this.fmsOrderSearch = new GUI.View.FilterModeSelector();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOrders)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -57,9 +61,9 @@
             this.clbItemTypes.CheckOnClick = true;
             this.clbItemTypes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.clbItemTypes.FormattingEnabled = true;
-            this.clbItemTypes.Location = new System.Drawing.Point(3, 168);
+            this.clbItemTypes.Location = new System.Drawing.Point(3, 192);
             this.clbItemTypes.Name = "clbItemTypes";
-            this.clbItemTypes.Size = new System.Drawing.Size(271, 152);
+            this.clbItemTypes.Size = new System.Drawing.Size(271, 128);
             this.clbItemTypes.TabIndex = 1;
             // 
             // dgvOrders
@@ -77,31 +81,24 @@
             this.dgvOrders.TabIndex = 2;
             this.dgvOrders.Text = "dataGridView1";
             // 
-            // fmsItemTypes
-            // 
-            this.fmsItemTypes.Location = new System.Drawing.Point(3, 142);
-            this.fmsItemTypes.MaximumSize = new System.Drawing.Size(100, 20);
-            this.fmsItemTypes.MinimumSize = new System.Drawing.Size(100, 20);
-            this.fmsItemTypes.Name = "fmsItemTypes";
-            this.fmsItemTypes.Size = new System.Drawing.Size(100, 20);
-            this.fmsItemTypes.TabIndex = 3;
-            this.fmsItemTypes.UseAnyAll = true;
-            this.fmsItemTypes.UseMinMax = false;
-            // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33332F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33334F));
             this.tableLayoutPanel1.Controls.Add(this.clbItemTypes, 0, 6);
-            this.tableLayoutPanel1.Controls.Add(this.fmsItemTypes, 0, 5);
             this.tableLayoutPanel1.Controls.Add(this.btnSearch, 2, 6);
-            this.tableLayoutPanel1.Controls.Add(this.fmsItemCondition, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.cbItemCondition, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.tbItemCount, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.fmsItemCount, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.cbItemCountType, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.clbOrderStatuses, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.cbOrderSearchType, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.tbOrderSearchValue, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.fmsItemCount, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.fmsItemCondition, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.fmsItemTypes, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.fmsOrderSearch, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 341);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -116,53 +113,118 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(834, 323);
             this.tableLayoutPanel1.TabIndex = 4;
             // 
-            // fmsItemCondition
-            // 
-            this.fmsItemCondition.Location = new System.Drawing.Point(3, 87);
-            this.fmsItemCondition.MaximumSize = new System.Drawing.Size(100, 20);
-            this.fmsItemCondition.MinimumSize = new System.Drawing.Size(100, 20);
-            this.fmsItemCondition.Name = "fmsItemCondition";
-            this.fmsItemCondition.Size = new System.Drawing.Size(100, 20);
-            this.fmsItemCondition.TabIndex = 4;
-            this.fmsItemCondition.UseAnyAll = true;
-            this.fmsItemCondition.UseMinMax = false;
-            // 
             // cbItemCondition
             // 
             this.cbItemCondition.Dock = System.Windows.Forms.DockStyle.Top;
             this.cbItemCondition.FormattingEnabled = true;
-            this.cbItemCondition.Location = new System.Drawing.Point(3, 113);
+            this.cbItemCondition.Location = new System.Drawing.Point(3, 129);
             this.cbItemCondition.Name = "cbItemCondition";
             this.cbItemCondition.Size = new System.Drawing.Size(271, 23);
             this.cbItemCondition.TabIndex = 5;
             // 
             // tbItemCount
             // 
-            this.tbItemCount.Location = new System.Drawing.Point(3, 58);
+            this.tbItemCount.Location = new System.Drawing.Point(3, 66);
             this.tbItemCount.Name = "tbItemCount";
             this.tbItemCount.Size = new System.Drawing.Size(48, 23);
             this.tbItemCount.TabIndex = 7;
             this.tbItemCount.Text = "0";
             // 
-            // fmsItemCount
-            // 
-            this.fmsItemCount.Location = new System.Drawing.Point(3, 3);
-            this.fmsItemCount.MaximumSize = new System.Drawing.Size(100, 20);
-            this.fmsItemCount.MinimumSize = new System.Drawing.Size(100, 20);
-            this.fmsItemCount.Name = "fmsItemCount";
-            this.fmsItemCount.Size = new System.Drawing.Size(100, 20);
-            this.fmsItemCount.TabIndex = 6;
-            this.fmsItemCount.UseAnyAll = false;
-            this.fmsItemCount.UseMinMax = true;
-            // 
             // cbItemCountType
             // 
             this.cbItemCountType.Dock = System.Windows.Forms.DockStyle.Top;
             this.cbItemCountType.FormattingEnabled = true;
-            this.cbItemCountType.Location = new System.Drawing.Point(3, 29);
+            this.cbItemCountType.Location = new System.Drawing.Point(3, 37);
             this.cbItemCountType.Name = "cbItemCountType";
             this.cbItemCountType.Size = new System.Drawing.Size(271, 23);
             this.cbItemCountType.TabIndex = 8;
+            // 
+            // clbOrderStatuses
+            // 
+            this.clbOrderStatuses.CheckOnClick = true;
+            this.clbOrderStatuses.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.clbOrderStatuses.FormattingEnabled = true;
+            this.clbOrderStatuses.Location = new System.Drawing.Point(280, 192);
+            this.clbOrderStatuses.Name = "clbOrderStatuses";
+            this.clbOrderStatuses.Size = new System.Drawing.Size(272, 128);
+            this.clbOrderStatuses.TabIndex = 9;
+            // 
+            // cbOrderSearchType
+            // 
+            this.cbOrderSearchType.Dock = System.Windows.Forms.DockStyle.Top;
+            this.cbOrderSearchType.FormattingEnabled = true;
+            this.cbOrderSearchType.Location = new System.Drawing.Point(280, 37);
+            this.cbOrderSearchType.Name = "cbOrderSearchType";
+            this.cbOrderSearchType.Size = new System.Drawing.Size(272, 23);
+            this.cbOrderSearchType.TabIndex = 10;
+            // 
+            // tbOrderSearchValue
+            // 
+            this.tbOrderSearchValue.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbOrderSearchValue.Location = new System.Drawing.Point(280, 66);
+            this.tbOrderSearchValue.Name = "tbOrderSearchValue";
+            this.tbOrderSearchValue.Size = new System.Drawing.Size(272, 23);
+            this.tbOrderSearchValue.TabIndex = 11;
+            // 
+            // fmsItemCount
+            // 
+            this.fmsItemCount.AutoSize = true;
+            this.fmsItemCount.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.fmsItemCount.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.fmsItemCount.Location = new System.Drawing.Point(3, 3);
+            this.fmsItemCount.MinimumSize = new System.Drawing.Size(100, 25);
+            this.fmsItemCount.Mode1Checked = true;
+            this.fmsItemCount.Mode1Text = "Min";
+            this.fmsItemCount.Mode2Checked = false;
+            this.fmsItemCount.Mode2Text = "Max";
+            this.fmsItemCount.Name = "fmsItemCount";
+            this.fmsItemCount.Size = new System.Drawing.Size(271, 28);
+            this.fmsItemCount.TabIndex = 12;
+            // 
+            // fmsItemCondition
+            // 
+            this.fmsItemCondition.AutoSize = true;
+            this.fmsItemCondition.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.fmsItemCondition.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.fmsItemCondition.Location = new System.Drawing.Point(3, 95);
+            this.fmsItemCondition.MinimumSize = new System.Drawing.Size(100, 25);
+            this.fmsItemCondition.Mode1Checked = true;
+            this.fmsItemCondition.Mode1Text = "Any";
+            this.fmsItemCondition.Mode2Checked = false;
+            this.fmsItemCondition.Mode2Text = "All";
+            this.fmsItemCondition.Name = "fmsItemCondition";
+            this.fmsItemCondition.Size = new System.Drawing.Size(271, 28);
+            this.fmsItemCondition.TabIndex = 13;
+            // 
+            // fmsItemTypes
+            // 
+            this.fmsItemTypes.AutoSize = true;
+            this.fmsItemTypes.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.fmsItemTypes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.fmsItemTypes.Location = new System.Drawing.Point(3, 158);
+            this.fmsItemTypes.MinimumSize = new System.Drawing.Size(100, 25);
+            this.fmsItemTypes.Mode1Checked = true;
+            this.fmsItemTypes.Mode1Text = "Any";
+            this.fmsItemTypes.Mode2Checked = false;
+            this.fmsItemTypes.Mode2Text = "All";
+            this.fmsItemTypes.Name = "fmsItemTypes";
+            this.fmsItemTypes.Size = new System.Drawing.Size(271, 28);
+            this.fmsItemTypes.TabIndex = 14;
+            // 
+            // fmsOrderSearch
+            // 
+            this.fmsOrderSearch.AutoSize = true;
+            this.fmsOrderSearch.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.fmsOrderSearch.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.fmsOrderSearch.Location = new System.Drawing.Point(280, 3);
+            this.fmsOrderSearch.MinimumSize = new System.Drawing.Size(100, 25);
+            this.fmsOrderSearch.Mode1Checked = false;
+            this.fmsOrderSearch.Mode1Text = "Strict";
+            this.fmsOrderSearch.Mode2Checked = true;
+            this.fmsOrderSearch.Mode2Text = "Loose";
+            this.fmsOrderSearch.Name = "fmsOrderSearch";
+            this.fmsOrderSearch.Size = new System.Drawing.Size(272, 28);
+            this.fmsOrderSearch.TabIndex = 15;
             // 
             // OrderView
             // 
@@ -185,12 +247,16 @@
         private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.CheckedListBox clbItemTypes;
         private System.Windows.Forms.DataGridView dgvOrders;
-        private FilterModeSelector fmsItemTypes;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private FilterModeSelector fmsItemCondition;
         private System.Windows.Forms.ComboBox cbItemCondition;
         private System.Windows.Forms.TextBox tbItemCount;
-        private FilterModeSelector fmsItemCount;
         private System.Windows.Forms.ComboBox cbItemCountType;
+        private System.Windows.Forms.CheckedListBox clbOrderStatuses;
+        private System.Windows.Forms.ComboBox cbOrderSearchType;
+        private System.Windows.Forms.TextBox tbOrderSearchValue;
+        private FilterModeSelector fmsItemCount;
+        private FilterModeSelector fmsItemCondition;
+        private FilterModeSelector fmsItemTypes;
+        private FilterModeSelector fmsOrderSearch;
     }
 }
