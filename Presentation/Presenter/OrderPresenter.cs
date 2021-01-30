@@ -21,7 +21,7 @@ namespace Presentation.Presenter
     public partial class OrderPresenter : IPresenter
     {
         private readonly IOrderView _orderView;
-        private readonly Func<IReadOnlyList<ItemVm>, ItemPresenter> _itemPresenterFactory;
+        private readonly Func<IReadOnlyList<Item>, ItemPresenter> _itemPresenterFactory;
         private readonly MainStagePresenter _stagePresenter;
         // Maybe this factory does not need the DataMode parameter if it can be resolved from the MainStagePresenter
         private readonly Func<DataMode, IOrderRepository> _repositoryFactory;
@@ -30,7 +30,7 @@ namespace Presentation.Presenter
         private readonly IOrderFilterer _orderFilterer;
         private IReadOnlyList<Order> _orders;
 
-        public OrderPresenter(IOrderView orderView, Func<IReadOnlyList<ItemVm>, ItemPresenter> itemPresenterFactory, MainStagePresenter stagePresenter,
+        public OrderPresenter(IOrderView orderView, Func<IReadOnlyList<Item>, ItemPresenter> itemPresenterFactory, MainStagePresenter stagePresenter,
             Func<DataMode, IOrderRepository> repositoryFactory, IDtoMapper dtoMapper, IVmMapper vmMapper, IOrderFilterer orderFilterer)
         {
             _orderView = orderView;
@@ -69,7 +69,7 @@ namespace Presentation.Presenter
 
         public void OpenView() => _stagePresenter.OpenView(_orderView);
 
-        private void OpenItemView(int orderId) => _itemPresenterFactory(_orders.Single(order => order.Id == orderId).Items.Select(item => _vmMapper.Map(item)).ToList()).OpenView();
+        private void OpenItemView(int orderId) => _itemPresenterFactory(_orders.Single(order => order.Id == orderId).Items).OpenView();
 
         private async void Search()
         {
@@ -87,34 +87,13 @@ namespace Presentation.Presenter
             if (_orders == null) return;
             IReadOnlyList<Order> filteredOrders = new List<Order>(_orders);
 
-            filteredOrders = _orderFilterer.FilterByOrderStatus(filteredOrders, ToListOfEnum<OrderStatus>(_orderView.OrderStatuses));
-            filteredOrders = _orderFilterer.FilterByItemType(filteredOrders, ToListOfEnum<ItemType>(_orderView.ItemTypes), ToNullableEnum<AnyAllFilterMode>(_orderView.ItemTypeFilterMode));
-            filteredOrders = _orderFilterer.FilterByItemCondition(filteredOrders, ToNullableEnum<ItemCondition>(_orderView.ItemCondition), ToNullableEnum<AnyAllFilterMode>(_orderView.ItemConditionFilterMode));
-            filteredOrders = _orderFilterer.FilterByItemCount(filteredOrders, _orderView.ItemCount, _orderView.ItemCountType, ToNullableEnum<MinMaxFilterMode>(_orderView.ItemCountTypeFilterMode));
-            filteredOrders = _orderFilterer.FilterByOrderSearch(filteredOrders, _orderView.OrderSearchValue, _orderView.OrderSearchType, ToNullableEnum<StrictLooseFilterMode>(_orderView.OrderSearchFilterMode));
+            filteredOrders = _orderFilterer.FilterByOrderStatus(filteredOrders, EnumUtils.ToListOfEnum<OrderStatus>(_orderView.OrderStatuses));
+            filteredOrders = _orderFilterer.FilterByItemType(filteredOrders, EnumUtils.ToListOfEnum<ItemType>(_orderView.ItemTypes), EnumUtils.ToNullableEnum<AnyAllFilterMode>(_orderView.ItemTypeFilterMode));
+            filteredOrders = _orderFilterer.FilterByItemCondition(filteredOrders, EnumUtils.ToNullableEnum<ItemCondition>(_orderView.ItemCondition), EnumUtils.ToNullableEnum<AnyAllFilterMode>(_orderView.ItemConditionFilterMode));
+            filteredOrders = _orderFilterer.FilterByItemCount(filteredOrders, _orderView.ItemCount, _orderView.ItemCountType, EnumUtils.ToNullableEnum<MinMaxFilterMode>(_orderView.ItemCountTypeFilterMode));
+            filteredOrders = _orderFilterer.FilterByOrderSearch(filteredOrders, _orderView.OrderSearchValue, _orderView.OrderSearchType, EnumUtils.ToNullableEnum<StrictLooseFilterMode>(_orderView.OrderSearchFilterMode));
 
-            _orderView.Orders = filteredOrders.ToList();
-
-            static TEnum? ToNullableEnum<TEnum>(string value) where TEnum : struct
-            {
-                return Enum.TryParse(value, out TEnum result) ? result : null as TEnum?;
-            }
-            
-            static IReadOnlyList<TEnum> ToListOfEnum<TEnum>(IEnumerable<string> values) where TEnum : struct
-            {
-                return ToEnums(values)?.ToList();
-
-                static IEnumerable<TEnum> ToEnums(IEnumerable<string> values)
-                {
-                    foreach (var value in values)
-                    {
-                        if (Enum.TryParse<TEnum>(value, out var result))
-                        {
-                            yield return result;
-                        }
-                    }
-                }
-            }
+            _orderView.Orders = filteredOrders;
         }
     }
 }

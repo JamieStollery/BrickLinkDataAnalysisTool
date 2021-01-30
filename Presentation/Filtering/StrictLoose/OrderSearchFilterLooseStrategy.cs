@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Presentation.Filtering.StrictLoose
 {
-    public class OrderSearchFilterLooseStrategy : IStrictLooseFilterModeStrategy
+    public class OrderSearchFilterLooseStrategy : IStrictLooseFilterModeStrategy<Order>
     {
         private readonly Func<Order, string> _getOrderProperty;
 

@@ -18,6 +18,7 @@ using Presentation.Model.Validation;
 using Presentation.Presenter;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
+using Presentation.View.Model;
 using System;
 using System.Collections.Generic;
 
@@ -156,6 +157,7 @@ namespace GUI
             // Filtering
             {
                 builder.RegisterType<OrderFilterer>().As<IOrderFilterer>().InstancePerLifetimeScope();
+                builder.RegisterType<ItemFilterer>().As<IItemFilterer>().InstancePerLifetimeScope();
 
                 // Any/All filter strategies
                 {
@@ -171,10 +173,10 @@ namespace GUI
 
                 // Min/Max filter strategies
                 {
-                    builder.RegisterType<ItemCountFilterMaxStrategy>().As<IMinMaxFilterModeStrategy>().Keyed<IMinMaxFilterModeStrategy>(MinMaxFilterMode.Max);
-                    builder.RegisterType<ItemCountFilterMinStrategy>().As<IMinMaxFilterModeStrategy>().Keyed<IMinMaxFilterModeStrategy>(MinMaxFilterMode.Min);
+                    builder.RegisterType<OrderItemCountFilterMaxStrategy>().As<IMinMaxFilterModeStrategy<Order>>().Keyed<IMinMaxFilterModeStrategy<Order>>(MinMaxFilterMode.Max);
+                    builder.RegisterType<OrderItemCountFilterMinStrategy>().As<IMinMaxFilterModeStrategy<Order>>().Keyed<IMinMaxFilterModeStrategy<Order>>(MinMaxFilterMode.Min);
                     // Register an IMinMaxFilterModeStrategy factory which returns the strategy keyed with the MinMaxFilterMode provided
-                    builder.Register<Func<string, MinMaxFilterMode, IMinMaxFilterModeStrategy>>(context =>
+                    builder.Register<Func<string, MinMaxFilterMode, IMinMaxFilterModeStrategy<Order>>>(context =>
                     {
                         var cc = context.Resolve<IComponentContext>();
                         return (countType, mode) =>
@@ -191,19 +193,30 @@ namespace GUI
                             }
                             if (func != null)
                             {
-                                return cc.ResolveKeyed<IMinMaxFilterModeStrategy>(mode, TypedParameter.From(func));
+                                return cc.ResolveKeyed<IMinMaxFilterModeStrategy<Order>>(mode, TypedParameter.From(func));
                             }
                             return null;
                         };
+                    });
+
+                    builder.RegisterType<ItemCountFilterMaxStrategy>().As<IMinMaxFilterModeStrategy<ItemVm>>().Keyed<IMinMaxFilterModeStrategy<ItemVm>>(MinMaxFilterMode.Max);
+                    builder.RegisterType<ItemCountFilterMinStrategy>().As<IMinMaxFilterModeStrategy<ItemVm>>().Keyed<IMinMaxFilterModeStrategy<ItemVm>>(MinMaxFilterMode.Min);
+                    // Register an IMinMaxFilterModeStrategy factory which returns the strategy keyed with the MinMaxFilterMode provided
+                    builder.Register<Func<MinMaxFilterMode, IMinMaxFilterModeStrategy<ItemVm>>>(context =>
+                    {
+                        var cc = context.Resolve<IComponentContext>();
+                        return mode => cc.ResolveKeyed<IMinMaxFilterModeStrategy<ItemVm>>(mode);
                     });
                 }
 
                 // Strict/Loose filter strategies
                 {
-                    builder.RegisterType<OrderSearchFilterStrictStrategy>().As<IStrictLooseFilterModeStrategy>().Keyed<IStrictLooseFilterModeStrategy>(StrictLooseFilterMode.Strict);
-                    builder.RegisterType<OrderSearchFilterLooseStrategy>().As<IStrictLooseFilterModeStrategy>().Keyed<IStrictLooseFilterModeStrategy>(StrictLooseFilterMode.Loose);
+                    // maybe try .RegisterGeneric
 
-                    builder.Register<Func<string, StrictLooseFilterMode, IStrictLooseFilterModeStrategy>>(context =>
+                    builder.RegisterType<OrderSearchFilterStrictStrategy>().As<IStrictLooseFilterModeStrategy<Order>>().Keyed<IStrictLooseFilterModeStrategy<Order>>(StrictLooseFilterMode.Strict);
+                    builder.RegisterType<OrderSearchFilterLooseStrategy>().As<IStrictLooseFilterModeStrategy<Order>>().Keyed<IStrictLooseFilterModeStrategy<Order>>(StrictLooseFilterMode.Loose);
+
+                    builder.Register<Func<string, StrictLooseFilterMode, IStrictLooseFilterModeStrategy<Order>>>(context =>
                     {
                         var cc = context.Resolve<IComponentContext>();
                         return (searchType, mode) =>
@@ -220,11 +233,34 @@ namespace GUI
                             }
                             if (func != null)
                             {
-                                return cc.ResolveKeyed<IStrictLooseFilterModeStrategy>(mode, TypedParameter.From(func));
+                                return cc.ResolveKeyed<IStrictLooseFilterModeStrategy<Order>>(mode, TypedParameter.From(func));
                             }
                             return null;
                         };
                     });
+
+                    builder.RegisterType<ItemSearchFilterStrictStrategy>().As<IStrictLooseFilterModeStrategy<ItemVm>>().Keyed<IStrictLooseFilterModeStrategy<ItemVm>>(StrictLooseFilterMode.Strict);
+                    builder.RegisterType<ItemSearchFilterLooseStrategy>().As<IStrictLooseFilterModeStrategy<ItemVm>>().Keyed<IStrictLooseFilterModeStrategy<ItemVm>>(StrictLooseFilterMode.Loose);
+
+                    builder.Register<Func<string, StrictLooseFilterMode, IStrictLooseFilterModeStrategy<ItemVm>>>(context =>
+                      {
+                          var cc = context.Resolve<IComponentContext>();
+                          return (searchType, mode) =>
+                          {
+                              Func<ItemVm, string> func = (item) => searchType switch
+                              {
+                                  nameof(ItemVm.Number) => item.Number,
+                                  nameof(ItemVm.InventoryId) => item.InventoryId.ToString(),
+                                  nameof(ItemVm.Name) => item.Name,
+                                  nameof(ItemVm.CategoryId) => item.CategoryId.ToString(),
+                                  _ => null
+                              };
+                              if (func is null) return null;
+
+                              return cc.ResolveKeyed<IStrictLooseFilterModeStrategy<ItemVm>>(mode, TypedParameter.From(func));
+                          };
+                      });
+
                 }
             }
         }

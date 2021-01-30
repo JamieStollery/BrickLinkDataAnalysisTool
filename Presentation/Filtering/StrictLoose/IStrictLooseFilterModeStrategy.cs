@@ -1,10 +1,9 @@
-﻿using Presentation.Model.Orders;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Presentation.Filtering.StrictLoose
 {
-    public interface IStrictLooseFilterModeStrategy
+    public interface IStrictLooseFilterModeStrategy<T>
     {
-        IEnumerable<Order> Filter(IEnumerable<Order> orders, string searchValue);
+        IEnumerable<T> Filter(IEnumerable<T> values, string searchValue);
     }
 }

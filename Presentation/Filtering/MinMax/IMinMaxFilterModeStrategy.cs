@@ -1,10 +1,9 @@
-﻿using Presentation.Model.Orders;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Presentation.Filtering.MinMax
 {
-    public interface IMinMaxFilterModeStrategy
+    public interface IMinMaxFilterModeStrategy<T>
     {
-        IEnumerable<Order> Filter(IEnumerable<Order> orders, int count);
+        IEnumerable<T> Filter(IEnumerable<T> values, int count);
     }
 }

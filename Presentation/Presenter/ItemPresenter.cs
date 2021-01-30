@@ -1,4 +1,7 @@
 ﻿using Data.Common.Repository.Interface;
+using Presentation.Filtering;
+using Presentation.Filtering.MinMax;
+using Presentation.Filtering.StrictLoose;
 using Presentation.Model.Items;
 using Presentation.Model.Mapping;
 using Presentation.Presenter.Stage;
@@ -18,21 +21,49 @@ namespace Presentation.Presenter
         private readonly MainStagePresenter _stagePresenter;
         private readonly IReadOnlyList<ItemVm> _items;
         private readonly IItemImageRepository _repository;
+        private readonly IItemFilterer _itemFilterer;
+        private readonly IVmMapper _vmMapper;
+        private IReadOnlyList<ColorVm> _colors;
 
-        public ItemPresenter(IItemView view, MainStagePresenter stagePresenter, IItemImageRepository repository, IReadOnlyList<ItemVm> items)
+        public ItemPresenter(IItemView view, MainStagePresenter stagePresenter, IItemImageRepository repository, IReadOnlyList<Item> items, IItemFilterer itemFilterer, IVmMapper vmMapper)
         {
             _view = view;
             _stagePresenter = stagePresenter;
-            _items = items;
+            _items = items.Select(item => vmMapper.Map(item)).ToList();
             _repository = repository;
+            _itemFilterer = itemFilterer;
+            _vmMapper = vmMapper;
+            _colors = new List<ColorVm>();
 
-            _view.OnViewOpened = () => Task.Run(() => LoadItemImages());
+            _view.OnFilterChanged = FilterItems;
+            _view.OnViewOpened = async () => await LoadItemImages();
+            _view.OnViewOpened = async () => await LoadItemColors();
+
+            _view.ItemSearchTypes = new List<string>()
+            {
+                nameof(ItemVm.Number),
+                nameof(ItemVm.InventoryId),
+                nameof(ItemVm.Name),
+                nameof(ItemVm.CategoryId)
+            };
+            _view.ItemTypes = Enum.GetNames(typeof(ItemType));
+            var itemConditions = new List<string>() { "Any" };
+            itemConditions.AddRange(Enum.GetNames(typeof(ItemCondition)));
+            _view.ItemConditions = itemConditions;
+
             _view.Items = _items;
         }
 
         public Action BackToOrderView { set => _view.OnBackButtonClick = value; }
 
         public void OpenView() => _stagePresenter.OpenView(_view);
+
+        private async Task LoadItemColors()
+        {
+            var colors = await _repository.GetColors();
+            _colors = colors.Select(color => _vmMapper.Map(color)).ToList();
+            _view.Colors = _colors;
+        }
 
         private async Task LoadItemImages()
         {
@@ -43,6 +74,19 @@ namespace Presentation.Presenter
             }).ToList();
 
             await Task.WhenAll(tasks);
+        }
+
+        private void FilterItems()
+        {
+            IReadOnlyList<ItemVm> filteredItems = new List<ItemVm>(_items);
+
+            filteredItems = _itemFilterer.FilterByItemSearch(filteredItems, _view.ItemSearchValue, _view.ItemSearchType, EnumUtils.ToNullableEnum<StrictLooseFilterMode>(_view.ItemSearchFilterMode));
+            filteredItems = _itemFilterer.FilterByItemCondition(filteredItems, EnumUtils.ToNullableEnum<ItemCondition>(_view.ItemCondition));
+            filteredItems = _itemFilterer.FilterByItemType(filteredItems, EnumUtils.ToListOfEnum<ItemType>(_view.ItemTypes));
+            filteredItems = _itemFilterer.FilterByItemColor(filteredItems, _colors.Where(color => color.Checked).Select(color => color.Id).ToList());
+            filteredItems = _itemFilterer.FilterByItemCount(filteredItems, _view.ItemCount, EnumUtils.ToNullableEnum<MinMaxFilterMode>(_view.ItemCountFilterMode));
+
+            _view.Items = filteredItems;
         }
     }
 }

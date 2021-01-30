@@ -1,19 +1,14 @@
-﻿using Presentation.Model.Orders;
-using System;
+﻿using Presentation.View.Model;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Presentation.Filtering.MinMax
 {
-    public class ItemCountFilterMinStrategy : IMinMaxFilterModeStrategy
+    public class ItemCountFilterMinStrategy : IMinMaxFilterModeStrategy<ItemVm>
     {
-        private readonly Func<Order, int> _getItemCountProperty;
-
-        public ItemCountFilterMinStrategy(Func<Order, int> itemCountProperty)
+        public IEnumerable<ItemVm> Filter(IEnumerable<ItemVm> items, int count)
         {
-            _getItemCountProperty = itemCountProperty;
+            return items.Where(item => item.Quantity >= count);
         }
-
-        public IEnumerable<Order> Filter(IEnumerable<Order> orders, int count) => orders.Where(order => _getItemCountProperty(order) > count);
     }
 }

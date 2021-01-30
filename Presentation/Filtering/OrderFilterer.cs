@@ -12,12 +12,12 @@ namespace Presentation.Filtering
     public class OrderFilterer : IOrderFilterer
     {
         private readonly Func<AnyAllFilterMode, IAnyAllFilterModeStrategy> _anyAllFilterModeStrategyFactory;
-        private readonly Func<string, MinMaxFilterMode, IMinMaxFilterModeStrategy> _minMaxFilterModeStrategyFactory;
-        private readonly Func<string, StrictLooseFilterMode, IStrictLooseFilterModeStrategy> _strictLooseFilterModeStrategyFactory;
+        private readonly Func<string, MinMaxFilterMode, IMinMaxFilterModeStrategy<Order>> _minMaxFilterModeStrategyFactory;
+        private readonly Func<string, StrictLooseFilterMode, IStrictLooseFilterModeStrategy<Order>> _strictLooseFilterModeStrategyFactory;
 
         public OrderFilterer(Func<AnyAllFilterMode, IAnyAllFilterModeStrategy> anyAllFilterModeStrategyFactory,
-            Func<string, MinMaxFilterMode, IMinMaxFilterModeStrategy> minMaxFilterModeStrategyFactory,
-            Func<string, StrictLooseFilterMode, IStrictLooseFilterModeStrategy> strictLooseFilterModeStrategyFactory)
+            Func<string, MinMaxFilterMode, IMinMaxFilterModeStrategy<Order>> minMaxFilterModeStrategyFactory,
+            Func<string, StrictLooseFilterMode, IStrictLooseFilterModeStrategy<Order>> strictLooseFilterModeStrategyFactory)
         {
             _anyAllFilterModeStrategyFactory = anyAllFilterModeStrategyFactory;
             _minMaxFilterModeStrategyFactory = minMaxFilterModeStrategyFactory;
