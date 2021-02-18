@@ -13,15 +13,13 @@ namespace Presentation.Presenter
         private readonly ChildStagePresenter _stagePresenter;
         private readonly ILoginRepository _loginRepository;
         private readonly User _user;
-        private readonly IValidator<User> _userValidator;
 
-        public LoginPresenter(ILoginView view, ChildStagePresenter stagePresenter, ILoginRepository loginRepository, User user, IValidator<User> userValidator)
+        public LoginPresenter(ILoginView view, ChildStagePresenter stagePresenter, ILoginRepository loginRepository, User user)
         {
             _view = view;
             _stagePresenter = stagePresenter;
             _loginRepository = loginRepository;
             _user = user;
-            _userValidator = userValidator;
 
             _view.OnLoginButtonClick = () => Login();
             _view.OnRegisterButtonClick = () => OpenRegisterView();
@@ -34,19 +32,11 @@ namespace Presentation.Presenter
             _user.Username = _view.Username;
             _user.Password = _view.Password;
 
-            var result = _userValidator.Validate(_user);
-
-            if(!result.IsValid)
+            var (result, error) = await _loginRepository.Login(_user);
+            if (!result)
             {
                 _user.Invalidate();
-                _view.Error = result.Errors.First().ErrorMessage;
-                return;
-            }
-
-            if (!await _loginRepository.Login(_user))
-            {
-                _user.Invalidate();
-                _view.Error = "Invalid username or password";
+                _view.Error = error;
                 return;
             }
 

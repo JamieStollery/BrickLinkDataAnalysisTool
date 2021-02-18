@@ -5,6 +5,6 @@ namespace Data.Common.Repository.Interface
 {
     public interface ILoginRepository
     {
-        Task<bool> Login(User user);
+        Task<(bool result, string error)> Login(User user);
     }
 }

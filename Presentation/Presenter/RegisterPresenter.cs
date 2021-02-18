@@ -13,15 +13,13 @@ namespace Presentation.Presenter
         private readonly ChildStagePresenter _stagePresenter;
         private readonly IRegisterRepository _registerRepository;
         private readonly User _user;
-        private readonly IValidator<User> _userValidator;
 
-        public RegisterPresenter(IRegisterView view, ChildStagePresenter stagePresenter, IRegisterRepository registerRepository, User user, IValidator<User> userValidator)
+        public RegisterPresenter(IRegisterView view, ChildStagePresenter stagePresenter, IRegisterRepository registerRepository, User user)
         {
             _view = view;
             _stagePresenter = stagePresenter;
             _registerRepository = registerRepository;
             _user = user;
-            _userValidator = userValidator;
 
             _view.OnRegisterButtonClick = () => Register();
         }
@@ -30,8 +28,6 @@ namespace Presentation.Presenter
 
         private async void Register()
         {
-            // Register
-
             _user.Username = _view.Username;
             _user.Password = _view.Password;
             _user.ConsumerKey = _view.ConsumerKey;
@@ -39,22 +35,15 @@ namespace Presentation.Presenter
             _user.TokenValue = _view.TokenValue;
             _user.TokenSecret = _view.TokenSecret;
 
-            var result = _userValidator.Validate(_user);
+            var (result, error) = await _registerRepository.Register(_user);
 
-            if(!result.IsValid)
+            if(!result)
             {
                 _user.Invalidate();
-                _view.Error = result.Errors.First().ErrorMessage;
-                return;
-            }
-            if(!await _registerRepository.Register(_user))
-            {
-                _user.Invalidate();
-                _view.Error = "Failed to create user";
+                _view.Error = error;
                 return;
             }
 
-            //await _registerRepository.Register();
             _stagePresenter.OpenLoginView();
         }
     }

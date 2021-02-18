@@ -5,6 +5,7 @@ using Data.Common;
 using Data.Common.Model;
 using Data.Common.Repository.Interface;
 using Data.LocalDB;
+using FluentValidation;
 using OAuth;
 using System;
 using System.Data;
@@ -30,9 +31,30 @@ namespace Data.IoC
             builder.RegisterType<DapperWrapper>().As<IDapperWrapper>().WithParameter(ResolvedParameter.ForKeyed<IDbConnection>(Database.Orders)).Keyed<IDapperWrapper>(Database.Orders).InstancePerLifetimeScope();
             builder.RegisterType<DapperWrapper>().As<IDapperWrapper>().WithParameter(ResolvedParameter.ForKeyed<IDbConnection>(Database.Users)).Keyed<IDapperWrapper>(Database.Users).InstancePerLifetimeScope();
 
-            builder.RegisterType<UserRepository>().As<ILoginRepository>().As<IRegisterRepository>().WithParameter(ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Users)).InstancePerLifetimeScope();
+            builder.RegisterType<LoginRepository>().As<ILoginRepository>()
+                .WithParameters(new[] {
+                    ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Users),
+                    ResolvedParameter.ForKeyed<IValidator<User>>(Validator.Login)
+                }).InstancePerLifetimeScope();
 
-            builder.RegisterType<BrickLinkRequestFactory>().SingleInstance();
+            builder.RegisterType<RegisterRepository>().As<IRegisterRepository>()
+                .WithParameters(new[] {
+                    ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Users),
+                    ResolvedParameter.ForKeyed<IValidator<User>>(Validator.Register)
+                    }).InstancePerLifetimeScope();
+
+            builder.RegisterType<RegisterUserValidator>().As<IValidator<User>>().Keyed<IValidator<User>>(Validator.Register)
+                .WithParameter(ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Users)).InstancePerLifetimeScope();
+
+            builder.RegisterType<LoginUserValidator>().As<IValidator<User>>().Keyed<IValidator<User>>(Validator.Login)
+                .WithParameter(ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Users)).InstancePerLifetimeScope();
+
+            builder.RegisterType<BrickLinkRequestFactory>().As<IBrickLinkRequestFactory>();
+            builder.Register<Func<User, IBrickLinkRequestFactory>>(context =>
+            {
+                var cc = context.Resolve<IComponentContext>();
+                return user => cc.Resolve<IBrickLinkRequestFactory>(TypedParameter.From(user));
+            });
 
             builder.RegisterType<ItemImageRepository>().As<IItemImageRepository>().InstancePerLifetimeScope();
 
@@ -56,6 +78,11 @@ namespace Data.IoC
         {
             Users,
             Orders
+        }
+        private enum Validator
+        {
+            Register,
+            Login
         }
     }
 }

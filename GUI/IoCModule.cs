@@ -1,8 +1,6 @@
 ﻿using Autofac;
 using Autofac.Core;
-using Data.Common.Model;
 using Data.IoC;
-using FluentValidation;
 using GUI.View;
 using GUI.View.Stage;
 using Presentation;
@@ -10,11 +8,9 @@ using Presentation.Filtering;
 using Presentation.Filtering.AnyAll;
 using Presentation.Filtering.MinMax;
 using Presentation.Filtering.StrictLoose;
-using Presentation.Model;
 using Presentation.Model.Items;
 using Presentation.Model.Mapping;
 using Presentation.Model.Orders;
-using Presentation.Model.Validation;
 using Presentation.Presenter;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
@@ -118,8 +114,7 @@ namespace GUI
             {
                 // Register login View/Presenter keyed with PresenterType.Login
                 builder.RegisterType<LoginView>().As<ILoginView>();
-                // Parameter must be specified because IValidator<User> has multiple types registered
-                builder.RegisterType<LoginPresenter>().As<IPresenter>().Keyed<IPresenter>(Key.Login).WithParameter(ResolvedParameter.ForKeyed<IValidator<User>>(UserValidationType.Login));
+                builder.RegisterType<LoginPresenter>().As<IPresenter>().Keyed<IPresenter>(Key.Login);
                 // Register IPresenter factory which returns IPresenter keyed with PresenterType.Login
                 builder.Register<Func<IPresenter>>(context =>
                 {
@@ -132,20 +127,13 @@ namespace GUI
             {
                 // Register register View/Presenter keyed with PresenterType.Register
                 builder.RegisterType<RegisterView>().As<IRegisterView>();
-                // Parameter must be specified because IValidator<User> has multiple types registered
-                builder.RegisterType<RegisterPresenter>().As<IPresenter>().Keyed<IPresenter>(Key.Register).WithParameter(ResolvedParameter.ForKeyed<IValidator<User>>(UserValidationType.Register));
+                builder.RegisterType<RegisterPresenter>().As<IPresenter>().Keyed<IPresenter>(Key.Register);
                 // Register IPresenter factory which returns IPresenter keyed with PresenterType.Register
                 builder.Register<Func<IPresenter>>(context =>
                 {
                     var cc = context.Resolve<IComponentContext>();
                     return () => cc.ResolveKeyed<IPresenter>(Key.Register);
                 }).Keyed<Func<IPresenter>>(Key.Register);
-            }
-
-            // Validators
-            {
-                builder.RegisterType<LoginUserValidator>().As<IValidator<User>>().Keyed<IValidator<User>>(UserValidationType.Login).InstancePerLifetimeScope();
-                builder.RegisterType<RegisterUserValidator>().As<IValidator<User>>().Keyed<IValidator<User>>(UserValidationType.Register).InstancePerLifetimeScope();
             }
 
             // Mappers

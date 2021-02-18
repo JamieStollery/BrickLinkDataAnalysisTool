@@ -5,6 +5,6 @@ namespace Data.Common.Repository.Interface
 {
     public interface IRegisterRepository
     {
-        Task<bool> Register(User user);
+        Task<(bool result, string error)> Register(User user);
     }
 }

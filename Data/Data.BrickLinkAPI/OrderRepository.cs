@@ -1,4 +1,5 @@
-﻿using Data.Common.Model.Dto;
+﻿using Data.Common;
+using Data.Common.Model.Dto;
 using Data.Common.Repository.Interface;
 using Newtonsoft.Json.Linq;
 using System;
@@ -13,17 +14,16 @@ namespace Data.BrickLinkAPI
 {
     public class OrderRepository : IOrderRepository
     {
-        private readonly BrickLinkRequestFactory _requestFactory;
+        private readonly IBrickLinkRequestFactory _requestFactory;
 
-        public OrderRepository(BrickLinkRequestFactory requestFactory)
+        public OrderRepository(IBrickLinkRequestFactory requestFactory)
         {
             _requestFactory = requestFactory;
         }
 
         public async Task<IEnumerable<OrderDto>> GetOrders()
         {
-            var url = $"{_requestFactory.UrlPrefix}orders?status=-purged";
-            var request = _requestFactory.Create(url);
+            var request = _requestFactory.Create("orders?status=-purged");
 
             var response = await request.GetResponseAsync();
 
@@ -48,8 +48,7 @@ namespace Data.BrickLinkAPI
 
         public async Task<IEnumerable<OrderItemDto>> GetItems(int orderId)
         {
-            var url = $"{_requestFactory.UrlPrefix}orders/{orderId}/items";
-            var request = _requestFactory.Create(url);
+            var request = _requestFactory.Create($"orders/{orderId}/items");
 
             var response = await request.GetResponseAsync();
 
