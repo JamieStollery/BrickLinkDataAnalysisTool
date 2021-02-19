@@ -71,10 +71,12 @@
             // btnSearch
             // 
             this.btnSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSearch.FlatAppearance.BorderSize = 0;
+            this.btnSearch.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(18)))), ((int)(((byte)(28)))), ((int)(((byte)(37)))));
             this.btnSearch.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSearch.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnSearch.ForeColor = System.Drawing.Color.Silver;
-            this.btnSearch.Location = new System.Drawing.Point(711, 247);
+            this.btnSearch.Location = new System.Drawing.Point(711, 277);
             this.btnSearch.Name = "btnSearch";
             this.btnSearch.Size = new System.Drawing.Size(120, 30);
             this.btnSearch.TabIndex = 0;
@@ -88,7 +90,7 @@
             this.clbItemTypes.FormattingEnabled = true;
             this.clbItemTypes.Location = new System.Drawing.Point(3, 48);
             this.clbItemTypes.Name = "clbItemTypes";
-            this.clbItemTypes.Size = new System.Drawing.Size(142, 229);
+            this.clbItemTypes.Size = new System.Drawing.Size(142, 252);
             this.clbItemTypes.TabIndex = 1;
             // 
             // dgvOrders
@@ -102,7 +104,7 @@
             this.dgvOrders.MultiSelect = false;
             this.dgvOrders.Name = "dgvOrders";
             this.dgvOrders.ReadOnly = true;
-            this.dgvOrders.Size = new System.Drawing.Size(834, 354);
+            this.dgvOrders.Size = new System.Drawing.Size(834, 324);
             this.dgvOrders.TabIndex = 2;
             this.dgvOrders.Text = "dataGridView1";
             // 
@@ -140,7 +142,7 @@
             this.clbOrderStatuses.FormattingEnabled = true;
             this.clbOrderStatuses.Location = new System.Drawing.Point(3, 19);
             this.clbOrderStatuses.Name = "clbOrderStatuses";
-            this.clbOrderStatuses.Size = new System.Drawing.Size(126, 258);
+            this.clbOrderStatuses.Size = new System.Drawing.Size(126, 281);
             this.clbOrderStatuses.TabIndex = 9;
             // 
             // cbOrderSearchType
@@ -149,15 +151,16 @@
             this.cbOrderSearchType.FormattingEnabled = true;
             this.cbOrderSearchType.Location = new System.Drawing.Point(3, 3);
             this.cbOrderSearchType.Name = "cbOrderSearchType";
-            this.cbOrderSearchType.Size = new System.Drawing.Size(238, 24);
+            this.cbOrderSearchType.Size = new System.Drawing.Size(292, 24);
             this.cbOrderSearchType.TabIndex = 10;
             // 
             // tbOrderSearchValue
             // 
-            this.tbOrderSearchValue.Location = new System.Drawing.Point(247, 3);
+            this.tbOrderSearchValue.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbOrderSearchValue.Location = new System.Drawing.Point(3, 33);
             this.tbOrderSearchValue.MinimumSize = new System.Drawing.Size(48, 4);
             this.tbOrderSearchValue.Name = "tbOrderSearchValue";
-            this.tbOrderSearchValue.Size = new System.Drawing.Size(48, 23);
+            this.tbOrderSearchValue.Size = new System.Drawing.Size(292, 23);
             this.tbOrderSearchValue.TabIndex = 11;
             // 
             // fmsItemCount
@@ -240,17 +243,19 @@
             this.splitContainer1.Panel2.Controls.Add(this.flowLayoutPanel2);
             this.splitContainer1.Panel2.Controls.Add(this.btnSearch);
             this.splitContainer1.Size = new System.Drawing.Size(834, 664);
-            this.splitContainer1.SplitterDistance = 380;
+            this.splitContainer1.SplitterDistance = 350;
             this.splitContainer1.TabIndex = 5;
             this.splitContainer1.Text = "splitContainer1";
             // 
             // btnHideFilters
             // 
             this.btnHideFilters.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.btnHideFilters.FlatAppearance.BorderSize = 0;
+            this.btnHideFilters.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(18)))), ((int)(((byte)(28)))), ((int)(((byte)(37)))));
             this.btnHideFilters.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnHideFilters.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.btnHideFilters.ForeColor = System.Drawing.Color.Silver;
-            this.btnHideFilters.Location = new System.Drawing.Point(0, 354);
+            this.btnHideFilters.Location = new System.Drawing.Point(0, 324);
             this.btnHideFilters.Name = "btnHideFilters";
             this.btnHideFilters.Size = new System.Drawing.Size(834, 26);
             this.btnHideFilters.TabIndex = 16;
@@ -265,7 +270,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(293, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(311, 280);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(311, 310);
             this.flowLayoutPanel1.TabIndex = 7;
             // 
             // gbOrderSearchControls
@@ -276,24 +281,25 @@
             this.gbOrderSearchControls.ForeColor = System.Drawing.Color.Silver;
             this.gbOrderSearchControls.Location = new System.Drawing.Point(3, 3);
             this.gbOrderSearchControls.Name = "gbOrderSearchControls";
-            this.gbOrderSearchControls.Size = new System.Drawing.Size(304, 87);
+            this.gbOrderSearchControls.Size = new System.Drawing.Size(304, 116);
             this.gbOrderSearchControls.TabIndex = 5;
             this.gbOrderSearchControls.TabStop = false;
             this.gbOrderSearchControls.Text = "Order Search";
             // 
             // tableLayoutPanel3
             // 
-            this.tableLayoutPanel3.ColumnCount = 2;
+            this.tableLayoutPanel3.ColumnCount = 1;
             this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.Controls.Add(this.tbOrderSearchValue, 1, 0);
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel3.Controls.Add(this.cbOrderSearchType, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.tbOrderSearchValue, 0, 1);
             this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 48);
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 1;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(298, 34);
+            this.tableLayoutPanel3.RowCount = 2;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(298, 62);
             this.tableLayoutPanel3.TabIndex = 16;
             // 
             // gbItemCountControls
@@ -302,7 +308,7 @@
             this.gbItemCountControls.Controls.Add(this.fmsItemCount);
             this.gbItemCountControls.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.gbItemCountControls.ForeColor = System.Drawing.Color.Silver;
-            this.gbItemCountControls.Location = new System.Drawing.Point(3, 96);
+            this.gbItemCountControls.Location = new System.Drawing.Point(3, 125);
             this.gbItemCountControls.Name = "gbItemCountControls";
             this.gbItemCountControls.Size = new System.Drawing.Size(304, 87);
             this.gbItemCountControls.TabIndex = 4;
@@ -330,9 +336,9 @@
             this.gbItemConditionControls.Controls.Add(this.fmsItemCondition);
             this.gbItemConditionControls.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.gbItemConditionControls.ForeColor = System.Drawing.Color.Silver;
-            this.gbItemConditionControls.Location = new System.Drawing.Point(3, 189);
+            this.gbItemConditionControls.Location = new System.Drawing.Point(3, 218);
             this.gbItemConditionControls.Name = "gbItemConditionControls";
-            this.gbItemConditionControls.Size = new System.Drawing.Size(304, 91);
+            this.gbItemConditionControls.Size = new System.Drawing.Size(304, 88);
             this.gbItemConditionControls.TabIndex = 6;
             this.gbItemConditionControls.TabStop = false;
             this.gbItemConditionControls.Text = "Item Condition";
@@ -344,7 +350,7 @@
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Left;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(293, 280);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(293, 310);
             this.flowLayoutPanel2.TabIndex = 8;
             // 
             // gbOrderStatusControls
@@ -354,7 +360,7 @@
             this.gbOrderStatusControls.ForeColor = System.Drawing.Color.Silver;
             this.gbOrderStatusControls.Location = new System.Drawing.Point(3, 3);
             this.gbOrderStatusControls.Name = "gbOrderStatusControls";
-            this.gbOrderStatusControls.Size = new System.Drawing.Size(132, 280);
+            this.gbOrderStatusControls.Size = new System.Drawing.Size(132, 303);
             this.gbOrderStatusControls.TabIndex = 2;
             this.gbOrderStatusControls.TabStop = false;
             this.gbOrderStatusControls.Text = "Order Status";
@@ -367,7 +373,7 @@
             this.gbItemTypeControls.ForeColor = System.Drawing.Color.Silver;
             this.gbItemTypeControls.Location = new System.Drawing.Point(141, 3);
             this.gbItemTypeControls.Name = "gbItemTypeControls";
-            this.gbItemTypeControls.Size = new System.Drawing.Size(148, 280);
+            this.gbItemTypeControls.Size = new System.Drawing.Size(148, 303);
             this.gbItemTypeControls.TabIndex = 3;
             this.gbItemTypeControls.TabStop = false;
             this.gbItemTypeControls.Text = "Item Type";
