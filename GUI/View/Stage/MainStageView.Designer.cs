@@ -224,7 +224,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.msMenu;
             this.Name = "MainStageView";
-            this.Text = "MainStageView";
+            this.Text = "BrickLink Data Analysis Tool";
             this.msMenu.ResumeLayout(false);
             this.msMenu.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
