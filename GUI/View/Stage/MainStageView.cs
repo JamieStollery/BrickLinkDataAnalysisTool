@@ -1,5 +1,4 @@
-﻿using Presentation.Presenter.Stage;
-using Presentation.View.Interface;
+﻿using Presentation.View.Interface;
 using System;
 using System.Windows.Forms;
 
@@ -7,9 +6,11 @@ namespace GUI.View.Stage
 {
     public partial class MainStageView : Form, IMainStageView
     {
-        public MainStageView()
+        public MainStageView(ToolStripRenderer toolStripRenderer)
         {
             InitializeComponent();
+            msMenu.Renderer = toolStripRenderer;
+            statusStrip1.Renderer = toolStripRenderer;
         }
 
         public Action OnStageOpened { set => Shown += (sender, e) => value(); }

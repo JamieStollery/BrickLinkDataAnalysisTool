@@ -13,6 +13,18 @@ namespace GUI.View
         {
             InitializeComponent();
             Dock = DockStyle.Fill;
+            btnHideFilters.Click += (sender, e) =>
+            {
+                if (splitContainer1.Panel2Collapsed)
+                {
+                    splitContainer1.Panel2Collapsed = false;
+                    btnHideFilters.Text = "v";
+                } else
+                {
+                    splitContainer1.Panel2Collapsed = true;
+                    btnHideFilters.Text = "^";
+                }
+            };
         }
         
         // get/set

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainStageView));
             this.pnlViewStage = new System.Windows.Forms.Panel();
             this.msMenu = new System.Windows.Forms.MenuStrip();
             this.miAccount = new System.Windows.Forms.ToolStripMenuItem();
@@ -52,16 +53,16 @@
             // 
             // pnlViewStage
             // 
-            this.pnlViewStage.BackColor = System.Drawing.SystemColors.Control;
+            this.pnlViewStage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(43)))), ((int)(((byte)(52)))));
             this.pnlViewStage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlViewStage.Location = new System.Drawing.Point(0, 27);
+            this.pnlViewStage.Location = new System.Drawing.Point(0, 24);
             this.pnlViewStage.Name = "pnlViewStage";
-            this.pnlViewStage.Size = new System.Drawing.Size(800, 401);
+            this.pnlViewStage.Size = new System.Drawing.Size(800, 404);
             this.pnlViewStage.TabIndex = 0;
             // 
             // msMenu
             // 
-            this.msMenu.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.msMenu.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.msMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.miAccount,
             this.miDatabase,
@@ -70,7 +71,8 @@
             this.tbDataMode});
             this.msMenu.Location = new System.Drawing.Point(0, 0);
             this.msMenu.Name = "msMenu";
-            this.msMenu.Size = new System.Drawing.Size(800, 27);
+            this.msMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            this.msMenu.Size = new System.Drawing.Size(800, 24);
             this.msMenu.TabIndex = 1;
             // 
             // miAccount
@@ -80,31 +82,36 @@
             this.toolStripSeparator1,
             this.miLogin,
             this.miRegister});
+            this.miAccount.ForeColor = System.Drawing.Color.Silver;
             this.miAccount.Name = "miAccount";
-            this.miAccount.Size = new System.Drawing.Size(64, 23);
+            this.miAccount.Size = new System.Drawing.Size(73, 20);
             this.miAccount.Text = "Account";
             // 
             // miLogout
             // 
+            this.miLogout.ForeColor = System.Drawing.Color.Silver;
             this.miLogout.Name = "miLogout";
-            this.miLogout.Size = new System.Drawing.Size(156, 22);
+            this.miLogout.Size = new System.Drawing.Size(176, 22);
             this.miLogout.Text = "Logout";
             // 
             // toolStripSeparator1
             // 
+            this.toolStripSeparator1.ForeColor = System.Drawing.Color.Silver;
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(153, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(173, 6);
             // 
             // miLogin
             // 
+            this.miLogin.ForeColor = System.Drawing.Color.Silver;
             this.miLogin.Name = "miLogin";
-            this.miLogin.Size = new System.Drawing.Size(156, 22);
+            this.miLogin.Size = new System.Drawing.Size(176, 22);
             this.miLogin.Text = "Login";
             // 
             // miRegister
             // 
+            this.miRegister.ForeColor = System.Drawing.Color.Silver;
             this.miRegister.Name = "miRegister";
-            this.miRegister.Size = new System.Drawing.Size(156, 22);
+            this.miRegister.Size = new System.Drawing.Size(176, 22);
             this.miRegister.Text = "Create Account";
             // 
             // miDatabase
@@ -114,63 +121,77 @@
             this.toolStripSeparator2,
             this.miUpdateDatabase,
             this.miClearDatabase});
+            this.miDatabase.ForeColor = System.Drawing.Color.Silver;
             this.miDatabase.Name = "miDatabase";
-            this.miDatabase.Size = new System.Drawing.Size(67, 23);
+            this.miDatabase.Size = new System.Drawing.Size(82, 20);
             this.miDatabase.Text = "Database";
             // 
             // miChangeDataMode
             // 
+            this.miChangeDataMode.ForeColor = System.Drawing.Color.Silver;
             this.miChangeDataMode.Name = "miChangeDataMode";
-            this.miChangeDataMode.Size = new System.Drawing.Size(176, 22);
+            this.miChangeDataMode.Size = new System.Drawing.Size(202, 22);
             this.miChangeDataMode.Text = "Change Data Mode";
             // 
             // toolStripSeparator2
             // 
+            this.toolStripSeparator2.ForeColor = System.Drawing.Color.Silver;
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(173, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(199, 6);
             // 
             // miUpdateDatabase
             // 
+            this.miUpdateDatabase.ForeColor = System.Drawing.Color.Silver;
             this.miUpdateDatabase.Name = "miUpdateDatabase";
-            this.miUpdateDatabase.Size = new System.Drawing.Size(176, 22);
+            this.miUpdateDatabase.Size = new System.Drawing.Size(202, 22);
             this.miUpdateDatabase.Text = "Update Database";
             // 
             // miClearDatabase
             // 
+            this.miClearDatabase.ForeColor = System.Drawing.Color.Silver;
             this.miClearDatabase.Name = "miClearDatabase";
-            this.miClearDatabase.Size = new System.Drawing.Size(176, 22);
+            this.miClearDatabase.Size = new System.Drawing.Size(202, 22);
             this.miClearDatabase.Text = "Clear Database";
             // 
             // tbUsername
             // 
             this.tbUsername.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.tbUsername.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tbUsername.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(18)))), ((int)(((byte)(28)))), ((int)(((byte)(37)))));
             this.tbUsername.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.tbUsername.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.tbUsername.ForeColor = System.Drawing.Color.Silver;
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.ReadOnly = true;
-            this.tbUsername.Size = new System.Drawing.Size(100, 23);
+            this.tbUsername.Size = new System.Drawing.Size(100, 20);
             this.tbUsername.Text = "Username:";
             // 
             // tbSeperator
             // 
             this.tbSeperator.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.tbSeperator.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tbSeperator.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(18)))), ((int)(((byte)(28)))), ((int)(((byte)(37)))));
+            this.tbSeperator.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.tbSeperator.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.tbSeperator.ForeColor = System.Drawing.Color.Silver;
             this.tbSeperator.Name = "tbSeperator";
             this.tbSeperator.ReadOnly = true;
-            this.tbSeperator.Size = new System.Drawing.Size(10, 23);
+            this.tbSeperator.Size = new System.Drawing.Size(10, 20);
             this.tbSeperator.Text = "|";
             // 
             // tbDataMode
             // 
             this.tbDataMode.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.tbDataMode.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.tbDataMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(18)))), ((int)(((byte)(28)))), ((int)(((byte)(37)))));
+            this.tbDataMode.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.tbDataMode.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.tbDataMode.ForeColor = System.Drawing.Color.Silver;
             this.tbDataMode.Name = "tbDataMode";
             this.tbDataMode.ReadOnly = true;
-            this.tbDataMode.Size = new System.Drawing.Size(100, 23);
+            this.tbDataMode.Size = new System.Drawing.Size(100, 20);
             this.tbDataMode.Text = "Data Mode:";
             // 
             // statusStrip1
             // 
+            this.statusStrip1.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.pbTaskProgress,
             this.lblTaskLabel});
@@ -178,7 +199,6 @@
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(800, 22);
             this.statusStrip1.TabIndex = 2;
-            this.statusStrip1.Text = "ssStatus";
             // 
             // pbTaskProgress
             // 
@@ -187,21 +207,24 @@
             // 
             // lblTaskLabel
             // 
+            this.lblTaskLabel.ForeColor = System.Drawing.Color.Silver;
             this.lblTaskLabel.Name = "lblTaskLabel";
-            this.lblTaskLabel.Size = new System.Drawing.Size(118, 17);
+            this.lblTaskLabel.Size = new System.Drawing.Size(141, 17);
             this.lblTaskLabel.Text = "toolStripStatusLabel1";
             // 
             // MainStageView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.pnlViewStage);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.msMenu);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.msMenu;
             this.Name = "MainStageView";
-            this.Text = "MainStageView";
+            this.Text = "BrickLink Data Analysis Tool";
             this.msMenu.ResumeLayout(false);
             this.msMenu.PerformLayout();
             this.statusStrip1.ResumeLayout(false);

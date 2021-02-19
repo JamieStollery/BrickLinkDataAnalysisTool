@@ -14,6 +14,18 @@ namespace GUI.View
         {
             InitializeComponent();
             Dock = DockStyle.Fill;
+            btnHideFilters.Click += (sender, e) =>
+            {
+                if (splitContainer1.Panel2Collapsed)
+                {
+                    splitContainer1.Panel2Collapsed = false;
+                    btnHideFilters.Text = "v";
+                } else
+                {
+                    splitContainer1.Panel2Collapsed = true;
+                    btnHideFilters.Text = "^";
+                }
+            };
 
             // This commits the dgv changes and fires the CellValueChanged event on CellContentClick
             // https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.datagridview.cellvaluechanged?view=net-5.0
