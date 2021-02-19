@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainStageView));
             this.pnlViewStage = new System.Windows.Forms.Panel();
             this.msMenu = new System.Windows.Forms.MenuStrip();
             this.miAccount = new System.Windows.Forms.ToolStripMenuItem();
@@ -220,6 +221,7 @@
             this.Controls.Add(this.pnlViewStage);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.msMenu);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.msMenu;
             this.Name = "MainStageView";
             this.Text = "MainStageView";
