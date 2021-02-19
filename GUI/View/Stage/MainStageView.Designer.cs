@@ -52,7 +52,7 @@
             // 
             // pnlViewStage
             // 
-            this.pnlViewStage.BackColor = System.Drawing.SystemColors.Control;
+            this.pnlViewStage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(43)))), ((int)(((byte)(52)))));
             this.pnlViewStage.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlViewStage.Location = new System.Drawing.Point(0, 24);
             this.pnlViewStage.Name = "pnlViewStage";

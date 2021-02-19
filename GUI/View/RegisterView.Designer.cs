@@ -48,9 +48,12 @@
             // btnRegister
             // 
             this.btnRegister.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnRegister.Location = new System.Drawing.Point(3, 267);
+            this.btnRegister.FlatAppearance.BorderSize = 0;
+            this.btnRegister.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(18)))), ((int)(((byte)(28)))), ((int)(((byte)(37)))));
+            this.btnRegister.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnRegister.Location = new System.Drawing.Point(3, 273);
             this.btnRegister.Name = "btnRegister";
-            this.btnRegister.Size = new System.Drawing.Size(244, 23);
+            this.btnRegister.Size = new System.Drawing.Size(280, 25);
             this.btnRegister.TabIndex = 0;
             this.btnRegister.Text = "Register";
             this.btnRegister.UseVisualStyleBackColor = true;
@@ -91,96 +94,96 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(250, 300);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(286, 320);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // tbTokenSecret
             // 
             this.tbTokenSecret.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbTokenSecret.Location = new System.Drawing.Point(3, 238);
+            this.tbTokenSecret.Location = new System.Drawing.Point(3, 244);
             this.tbTokenSecret.Name = "tbTokenSecret";
-            this.tbTokenSecret.Size = new System.Drawing.Size(244, 23);
+            this.tbTokenSecret.Size = new System.Drawing.Size(280, 23);
             this.tbTokenSecret.TabIndex = 3;
             // 
             // lblTokenSecret
             // 
             this.lblTokenSecret.AutoSize = true;
             this.lblTokenSecret.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblTokenSecret.Location = new System.Drawing.Point(3, 220);
+            this.lblTokenSecret.Location = new System.Drawing.Point(3, 225);
             this.lblTokenSecret.Name = "lblTokenSecret";
-            this.lblTokenSecret.Size = new System.Drawing.Size(244, 15);
+            this.lblTokenSecret.Size = new System.Drawing.Size(280, 16);
             this.lblTokenSecret.TabIndex = 2;
             this.lblTokenSecret.Text = "Token Secret:";
             // 
             // tbTokenValue
             // 
             this.tbTokenValue.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbTokenValue.Location = new System.Drawing.Point(3, 194);
+            this.tbTokenValue.Location = new System.Drawing.Point(3, 199);
             this.tbTokenValue.Name = "tbTokenValue";
-            this.tbTokenValue.Size = new System.Drawing.Size(244, 23);
+            this.tbTokenValue.Size = new System.Drawing.Size(280, 23);
             this.tbTokenValue.TabIndex = 3;
             // 
             // lblTokenValue
             // 
             this.lblTokenValue.AutoSize = true;
             this.lblTokenValue.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblTokenValue.Location = new System.Drawing.Point(3, 176);
+            this.lblTokenValue.Location = new System.Drawing.Point(3, 180);
             this.lblTokenValue.Name = "lblTokenValue";
-            this.lblTokenValue.Size = new System.Drawing.Size(244, 15);
+            this.lblTokenValue.Size = new System.Drawing.Size(280, 16);
             this.lblTokenValue.TabIndex = 2;
             this.lblTokenValue.Text = "Token Value:";
             // 
             // tbConsumerSecret
             // 
             this.tbConsumerSecret.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbConsumerSecret.Location = new System.Drawing.Point(3, 150);
+            this.tbConsumerSecret.Location = new System.Drawing.Point(3, 154);
             this.tbConsumerSecret.Name = "tbConsumerSecret";
-            this.tbConsumerSecret.Size = new System.Drawing.Size(244, 23);
+            this.tbConsumerSecret.Size = new System.Drawing.Size(280, 23);
             this.tbConsumerSecret.TabIndex = 3;
             // 
             // lblConsumerSecret
             // 
             this.lblConsumerSecret.AutoSize = true;
             this.lblConsumerSecret.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblConsumerSecret.Location = new System.Drawing.Point(3, 132);
+            this.lblConsumerSecret.Location = new System.Drawing.Point(3, 135);
             this.lblConsumerSecret.Name = "lblConsumerSecret";
-            this.lblConsumerSecret.Size = new System.Drawing.Size(244, 15);
+            this.lblConsumerSecret.Size = new System.Drawing.Size(280, 16);
             this.lblConsumerSecret.TabIndex = 2;
             this.lblConsumerSecret.Text = "Consumer Secret:";
             // 
             // tbConsumerKey
             // 
             this.tbConsumerKey.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbConsumerKey.Location = new System.Drawing.Point(3, 106);
+            this.tbConsumerKey.Location = new System.Drawing.Point(3, 109);
             this.tbConsumerKey.Name = "tbConsumerKey";
-            this.tbConsumerKey.Size = new System.Drawing.Size(244, 23);
+            this.tbConsumerKey.Size = new System.Drawing.Size(280, 23);
             this.tbConsumerKey.TabIndex = 3;
             // 
             // lblConsumerKey
             // 
             this.lblConsumerKey.AutoSize = true;
             this.lblConsumerKey.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblConsumerKey.Location = new System.Drawing.Point(3, 88);
+            this.lblConsumerKey.Location = new System.Drawing.Point(3, 90);
             this.lblConsumerKey.Name = "lblConsumerKey";
-            this.lblConsumerKey.Size = new System.Drawing.Size(244, 15);
+            this.lblConsumerKey.Size = new System.Drawing.Size(280, 16);
             this.lblConsumerKey.TabIndex = 2;
             this.lblConsumerKey.Text = "Consumer Key:";
             // 
             // tbPassword
             // 
             this.tbPassword.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbPassword.Location = new System.Drawing.Point(3, 62);
+            this.tbPassword.Location = new System.Drawing.Point(3, 64);
             this.tbPassword.Name = "tbPassword";
-            this.tbPassword.Size = new System.Drawing.Size(244, 23);
+            this.tbPassword.Size = new System.Drawing.Size(280, 23);
             this.tbPassword.TabIndex = 3;
             // 
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
             this.lblPassword.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblPassword.Location = new System.Drawing.Point(3, 44);
+            this.lblPassword.Location = new System.Drawing.Point(3, 45);
             this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(244, 15);
+            this.lblPassword.Size = new System.Drawing.Size(280, 16);
             this.lblPassword.TabIndex = 2;
             this.lblPassword.Text = "Password:";
             // 
@@ -190,28 +193,31 @@
             this.lblUsername.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblUsername.Location = new System.Drawing.Point(3, 0);
             this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(244, 15);
+            this.lblUsername.Size = new System.Drawing.Size(280, 16);
             this.lblUsername.TabIndex = 2;
             this.lblUsername.Text = "Username:";
             // 
             // tbUsername
             // 
             this.tbUsername.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbUsername.Location = new System.Drawing.Point(3, 18);
+            this.tbUsername.Location = new System.Drawing.Point(3, 19);
             this.tbUsername.Name = "tbUsername";
-            this.tbUsername.Size = new System.Drawing.Size(244, 23);
+            this.tbUsername.Size = new System.Drawing.Size(280, 23);
             this.tbUsername.TabIndex = 3;
             // 
             // RegisterView
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(43)))), ((int)(((byte)(52)))));
             this.Controls.Add(this.tableLayoutPanel1);
-            this.MinimumSize = new System.Drawing.Size(250, 300);
+            this.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.ForeColor = System.Drawing.Color.Silver;
+            this.MinimumSize = new System.Drawing.Size(286, 320);
             this.Name = "RegisterView";
-            this.Size = new System.Drawing.Size(250, 300);
+            this.Size = new System.Drawing.Size(286, 320);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
