@@ -17,6 +17,7 @@ using Presentation.View.Interface;
 using Presentation.View.Model;
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace GUI
 {
@@ -47,6 +48,8 @@ namespace GUI
                         // Resolve IPresenter factory keyed with PresenterType.Order
                         ResolvedParameter.ForKeyed<Func<IPresenter>>(Key.Order)
                     }).InstancePerLifetimeScope();
+                // Register ToolStripRenderer for MainStageView
+                builder.RegisterInstance(new ToolStripProfessionalRenderer(new MenuColorTable())).As<ToolStripRenderer>();
             }
 
             // ChildStage

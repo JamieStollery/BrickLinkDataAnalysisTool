@@ -6,11 +6,11 @@ namespace GUI.View.Stage
 {
     public partial class MainStageView : Form, IMainStageView
     {
-        public MainStageView()
+        public MainStageView(ToolStripRenderer toolStripRenderer)
         {
             InitializeComponent();
-            msMenu.Renderer = new ToolStripProfessionalRenderer(new MenuColorTable());
-            statusStrip1.Renderer = new ToolStripProfessionalRenderer(new MenuColorTable());
+            msMenu.Renderer = toolStripRenderer;
+            statusStrip1.Renderer = toolStripRenderer;
         }
 
         public Action OnStageOpened { set => Shown += (sender, e) => value(); }
