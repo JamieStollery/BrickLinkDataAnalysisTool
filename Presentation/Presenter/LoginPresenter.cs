@@ -1,51 +1,49 @@
 ﻿using Data.Common.Model;
+using Data.Common.Option;
 using Data.Common.Repository.Interface;
-using FluentValidation;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
-using System.Linq;
+using System;
 
 namespace Presentation.Presenter
 {
     public class LoginPresenter : IPresenter
     {
         private readonly ILoginView _view;
-        private readonly ChildStagePresenter _stagePresenter;
         private readonly ILoginRepository _loginRepository;
-        private readonly User _user;
+        private readonly IStagePresenter _stagePresenter;
+        private readonly IOption<User> _userOption;
 
-        public LoginPresenter(ILoginView view, ChildStagePresenter stagePresenter, ILoginRepository loginRepository, User user)
+        public LoginPresenter(ILoginView view, ILoginRepository loginRepository, IStagePresenter stagePresenter, Action openRegisterView, IOption<User> userOption)
         {
             _view = view;
-            _stagePresenter = stagePresenter;
             _loginRepository = loginRepository;
-            _user = user;
+            _stagePresenter = stagePresenter;
+            _userOption = userOption;
 
-            _view.OnLoginButtonClick = () => Login();
-            _view.OnRegisterButtonClick = () => OpenRegisterView();
+            _view.OnLoginButtonClick = Login;
+            _view.OnRegisterButtonClick = openRegisterView;
         }
 
         public void OpenView() => _stagePresenter.OpenView(_view);
 
         private async void Login()
         {
-            _user.Username = _view.Username;
-            _user.Password = _view.Password;
+            var user = new User()
+            {
+                Username = _view.Username,
+                Password = _view.Password
+            };
 
-            var (result, error) = await _loginRepository.Login(_user);
+            var (result, error) = await _loginRepository.Login(user);
             if (!result)
             {
-                _user.Invalidate();
                 _view.Error = error;
                 return;
             }
+            _userOption.Value = user;
 
             _stagePresenter.CloseStage();
-        }
-
-        private void OpenRegisterView()
-        {
-            _stagePresenter.OpenRegisterView();
         }
     }
 }

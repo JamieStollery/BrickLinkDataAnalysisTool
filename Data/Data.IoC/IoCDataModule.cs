@@ -3,15 +3,14 @@ using Autofac.Core;
 using Data.BrickLinkAPI;
 using Data.Common;
 using Data.Common.Model;
+using Data.Common.Option;
 using Data.Common.Repository.Interface;
 using Data.LocalDB;
 using FluentValidation;
-using OAuth;
 using System;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
-using System.Net;
 
 namespace Data.IoC
 {
@@ -19,7 +18,8 @@ namespace Data.IoC
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<User>().SingleInstance();
+            builder.RegisterType<UserOption>().As<IOption<User>>().SingleInstance();
+            builder.RegisterType<DataModeOption>().As<IOption<DataMode>>().SingleInstance();
 
             var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var usersConnectionString = $"Data Source={Path.Combine(folderPath, "Users.db3")};Version=3;";
@@ -60,12 +60,20 @@ namespace Data.IoC
 
             builder.RegisterType<BrickLinkAPI.OrderRepository>().As<IOrderRepository>().Keyed<IOrderRepository>(DataMode.API).InstancePerLifetimeScope();
             builder.RegisterType<LocalDB.OrderRepository>().As<IOrderRepository>().Keyed<IOrderRepository>(DataMode.Database).InstancePerLifetimeScope();
-            builder.Register<Func<DataMode, IOrderRepository>>(context =>
+            builder.Register<Func<IOrderRepository>>(context =>
             {
                 var cc = context.Resolve<IComponentContext>();
-                return mode => mode == DataMode.Database ? cc.ResolveKeyed<IOrderRepository>(mode, ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Orders)) : cc.ResolveKeyed<IOrderRepository>(mode);
+                return () =>
+                {
+                    var mode = cc.Resolve<IOption<DataMode>>().Value;
+                    return mode switch
+                    {
+                        DataMode.Database => cc.ResolveKeyed<IOrderRepository>(mode, ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Orders)),
+                        DataMode.API => cc.ResolveKeyed<IOrderRepository>(mode),
+                        _ => null
+                    };
+                };
             });
-
 
             builder.RegisterType<DatabaseUpdater>().As<IDatabaseUpdater>()
                 .WithParameters(new[]{
@@ -79,6 +87,7 @@ namespace Data.IoC
             Users,
             Orders
         }
+
         private enum Validator
         {
             Register,

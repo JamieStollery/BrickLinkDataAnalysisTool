@@ -2,7 +2,7 @@
 
 namespace Presentation.Presenter.Stage
 {
-    public abstract class StagePresenterBase
+    public abstract class StagePresenterBase : IStagePresenter
     {
         private readonly IStageView _view;
         private IView _currentView;

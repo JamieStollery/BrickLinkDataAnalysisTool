@@ -18,26 +18,28 @@ namespace Presentation.Presenter
     public class ItemPresenter : IPresenter
     {
         private readonly IItemView _view;
-        private readonly MainStagePresenter _stagePresenter;
-        private readonly IReadOnlyList<ItemVm> _items;
         private readonly IItemImageRepository _repository;
+        private readonly IStagePresenter _stagePresenter;
+        private readonly IReadOnlyList<ItemVm> _items;
         private readonly IItemFilterer _itemFilterer;
         private readonly IVmMapper _vmMapper;
         private IReadOnlyList<ColorVm> _colors;
 
-        public ItemPresenter(IItemView view, MainStagePresenter stagePresenter, IItemImageRepository repository, IReadOnlyList<Item> items, IItemFilterer itemFilterer, IVmMapper vmMapper)
+        public ItemPresenter(IItemView view, IItemImageRepository repository, IStagePresenter stagePresenter,
+            Action openOrderView, IReadOnlyList<Item> items, IItemFilterer itemFilterer, IVmMapper vmMapper)
         {
             _view = view;
+            _repository = repository;
             _stagePresenter = stagePresenter;
             _items = items.Select(item => vmMapper.Map(item)).ToList();
-            _repository = repository;
             _itemFilterer = itemFilterer;
             _vmMapper = vmMapper;
             _colors = new List<ColorVm>();
 
+            _view.OnBackButtonClick = openOrderView;
             _view.OnFilterChanged = FilterItems;
-            _view.OnViewOpened = async () => await LoadItemImages();
-            _view.OnViewOpened = async () => await LoadItemColors();
+            _view.OnViewOpened = LoadItemImages;
+            _view.OnViewOpened = LoadItemColors;
 
             _view.ItemSearchTypes = new List<string>()
             {
@@ -54,18 +56,16 @@ namespace Presentation.Presenter
             _view.Items = _items;
         }
 
-        public Action BackToOrderView { set => _view.OnBackButtonClick = value; }
-
         public void OpenView() => _stagePresenter.OpenView(_view);
 
-        private async Task LoadItemColors()
+        private async void LoadItemColors()
         {
             var colors = await _repository.GetColors();
             _colors = colors.Select(color => _vmMapper.Map(color)).ToList();
             _view.Colors = _colors;
         }
 
-        private async Task LoadItemImages()
+        private async void LoadItemImages()
         {
             var tasks = _items.Select(async item =>
             {

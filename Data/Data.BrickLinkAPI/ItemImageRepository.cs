@@ -1,5 +1,7 @@
 ﻿using Data.Common;
+using Data.Common.Model;
 using Data.Common.Model.Dto;
+using Data.Common.Option;
 using Data.Common.Repository.Interface;
 using Newtonsoft.Json.Linq;
 using System;
@@ -15,15 +17,17 @@ namespace Data.BrickLinkAPI
     public class ItemImageRepository : IItemImageRepository
     {
         private readonly IBrickLinkRequestFactory _requestFactory;
+        private readonly IOption<User> _userOption;
 
-        public ItemImageRepository(IBrickLinkRequestFactory requestFactory)
+        public ItemImageRepository(IBrickLinkRequestFactory requestFactory, IOption<User> userOption)
         {
             _requestFactory = requestFactory;
+            _userOption = userOption;
         }
 
         public async Task<Stream> GetItemImage(string type, string no, int colorId)
         {
-            var request = _requestFactory.Create($"items/{type}/{no}/images/{colorId}");
+            var request = _requestFactory.Create($"items/{type}/{no}/images/{colorId}", _userOption.Value);
 
             var response = await request.GetResponseAsync();
 
@@ -50,7 +54,7 @@ namespace Data.BrickLinkAPI
 
         public async Task<IEnumerable<ColorDto>> GetColors()
         {
-            var request = _requestFactory.Create("colors");
+            var request = _requestFactory.Create("colors", _userOption.Value);
 
             var response = await request.GetResponseAsync();
 

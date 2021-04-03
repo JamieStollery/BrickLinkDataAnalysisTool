@@ -27,18 +27,16 @@ namespace GUI
             builder.RegisterModule<IoCModule>();
             var container = builder.Build();
 
-            using(var scope = container.BeginLifetimeScope())
-            {
-                // Resolve main stage presenter
-                var presenter = scope.Resolve<MainStagePresenter>();
+            using var scope = container.BeginLifetimeScope();
 
-                // Open main stage
-                presenter.OpenStage();
+            // Resolve main stage presenter
+            var presenter = scope.ResolveKeyed<IStagePresenter>(Key.MainStage);
 
-                // Run application
-                Application.Run();
-            }
+            // Open main stage
+            presenter.OpenStage();
 
+            // Run application
+            Application.Run();
         }
     }
 }

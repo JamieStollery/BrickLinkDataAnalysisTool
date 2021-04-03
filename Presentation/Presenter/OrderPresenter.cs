@@ -1,16 +1,13 @@
-﻿using Data.Common;
-using Data.Common.Repository.Interface;
+﻿using Data.Common.Repository.Interface;
 using Presentation.Filtering;
 using Presentation.Filtering.AnyAll;
 using Presentation.Filtering.MinMax;
 using Presentation.Filtering.StrictLoose;
-using Presentation.Model;
 using Presentation.Model.Items;
 using Presentation.Model.Mapping;
 using Presentation.Model.Orders;
 using Presentation.Presenter.Stage;
 using Presentation.View.Interface;
-using Presentation.View.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,29 +18,21 @@ namespace Presentation.Presenter
     public partial class OrderPresenter : IPresenter
     {
         private readonly IOrderView _orderView;
-        private readonly Func<IReadOnlyList<Item>, ItemPresenter> _itemPresenterFactory;
-        private readonly MainStagePresenter _stagePresenter;
-        // Maybe this factory does not need the DataMode parameter if it can be resolved from the MainStagePresenter
-        private readonly Func<DataMode, IOrderRepository> _repositoryFactory;
+        private readonly Func<IOrderRepository> _repositoryFactory;
+        private readonly IStagePresenter _stagePresenter;
+        private readonly Func<IReadOnlyList<Item>, IPresenter> _itemPresenterFactory;
         private readonly IDtoMapper _dtoMapper;
-        private readonly IVmMapper _vmMapper;
         private readonly IOrderFilterer _orderFilterer;
         private IReadOnlyList<Order> _orders;
 
-        public OrderPresenter(IOrderView orderView, Func<IReadOnlyList<Item>, ItemPresenter> itemPresenterFactory, MainStagePresenter stagePresenter,
-            Func<DataMode, IOrderRepository> repositoryFactory, IDtoMapper dtoMapper, IVmMapper vmMapper, IOrderFilterer orderFilterer)
+        public OrderPresenter(IOrderView orderView, Func<IOrderRepository> repositoryFactory, IStagePresenter stagePresenter, 
+            Func<IReadOnlyList<Item>, Action, IPresenter> itemPresenterFactory, IDtoMapper dtoMapper, IOrderFilterer orderFilterer)
         {
             _orderView = orderView;
-            _itemPresenterFactory = (items) =>
-            {
-                var presenter = itemPresenterFactory(items);
-                presenter.BackToOrderView = OpenView;
-                return presenter;
-            };
-            _stagePresenter = stagePresenter;
             _repositoryFactory = repositoryFactory;
+            _stagePresenter = stagePresenter;
+            _itemPresenterFactory = (items) => itemPresenterFactory(items, OpenView);
             _dtoMapper = dtoMapper;
-            _vmMapper = vmMapper;
             _orderFilterer = orderFilterer;
 
             _orderView.OnSearchButtonClick = Search;
@@ -73,9 +62,9 @@ namespace Presentation.Presenter
 
         private async void Search()
         {
-            var orderDtos = await _repositoryFactory(_stagePresenter.DataMode).GetOrders();
+            var orderDtos = await _repositoryFactory().GetOrders();
 
-            var tasks = orderDtos.Select(async orderDto => _dtoMapper.Map(orderDto, await _repositoryFactory(_stagePresenter.DataMode).GetItems(orderDto.Order_id)));
+            var tasks = orderDtos.Select(async orderDto => _dtoMapper.Map(orderDto, await _repositoryFactory().GetItems(orderDto.Order_id)));
 
             _orders = await Task.WhenAll(tasks.ToList());
 

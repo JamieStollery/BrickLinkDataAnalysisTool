@@ -23,15 +23,6 @@ namespace GUI
 {
     public class IoCModule : Module
     {
-        private enum Key
-        {
-            MainStage,
-            ChildStage,
-            Order,
-            Login,
-            Register
-        }
-
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterModule<IoCDataModule>();
@@ -41,7 +32,7 @@ namespace GUI
                 // Register keyed main View/Presenter
                 builder.RegisterType<MainStageView>().As<IMainStageView>().Keyed<IStageView>(Key.MainStage).InstancePerLifetimeScope();
                 // Parameters must be specified because dependencies have multiple types registered
-                builder.RegisterType<MainStagePresenter>()
+                builder.RegisterType<MainStagePresenter>().As<IStagePresenter>().Keyed<IStagePresenter>(Key.MainStage)
                     .WithParameters(new[]{
                         // Resolve IStageView keyed with Key.Main
                         ResolvedParameter.ForKeyed<IMainStageView>(Key.MainStage),
@@ -57,30 +48,30 @@ namespace GUI
                 // Register keyed child View/Presenter
                 builder.RegisterType<ChildStageView>().As<IStageView>().Keyed<IStageView>(Key.ChildStage).InstancePerLifetimeScope();
                 // Parameters must be specified because dependencies have multiple types registered
-                builder.RegisterType<ChildStagePresenter>()
+                builder.RegisterType<ChildStagePresenter>().As<IStagePresenter>().AsSelf().Keyed<IStagePresenter>(Key.ChildStage)
                     .WithParameters(new[]{
                         // Resolve IStageView keyed with Key.ChildStage
                         ResolvedParameter.ForKeyed<IStageView>(Key.ChildStage),
                         // Resolve IPresenter factory keyed with PresenterType.Login
                         // Parameter name must be specified as ChildStagePresenter takes 2 different IPresenter factories
                         new ResolvedParameter(
-                            (pi, ctx) => pi.ParameterType == typeof(Func<IPresenter>) && pi.Name == "loginPresenterFactory",
-                            (pi, ctx) => ctx.ResolveKeyed<Func<IPresenter>>(Key.Login)
+                            (pi, ctx) => pi.ParameterType == typeof(Func<Action, IPresenter>) && pi.Name == "loginPresenterFactory",
+                            (pi, ctx) => ctx.ResolveKeyed<Func<Action, IPresenter>>(Key.Login)
                         ),
                         // Resolve IPresenter factory keyed with PresenterType.Register
                         // Parameter name must be specified as ChildStagePresenter takes 2 different IPresenter factories
                         new ResolvedParameter(
-                            (pi, ctx) => pi.ParameterType == typeof(Func<IPresenter>) && pi.Name == "registerPresenterFactory",
-                            (pi, ctx) => ctx.ResolveKeyed<Func<IPresenter>>(Key.Register)
+                            (pi, ctx) => pi.ParameterType == typeof(Func<Action, IPresenter>) && pi.Name == "registerPresenterFactory",
+                            (pi, ctx) => ctx.ResolveKeyed<Func<Action, IPresenter>>(Key.Register)
                         )
                     }).InstancePerLifetimeScope();
-                // Register a ChildStagePresenter factory that returns a child stage Presenter with the InitialView property set
-                builder.Register<Func<ChildStageViewType, ChildStagePresenter>>(context =>
+                // Register an IStagePresenter factory that returns a child stage Presenter with the InitialView property set
+                builder.Register<Func<ChildStageViewType, Action, ChildStagePresenter>>(context =>
                 {
                     var cc = context.Resolve<IComponentContext>();
-                    return initialView =>
+                    return (initialView, action) =>
                     {
-                        var presenter = cc.Resolve<ChildStagePresenter>();
+                        var presenter = cc.Resolve<ChildStagePresenter>(TypedParameter.From(action));
                         presenter.InitialView = initialView;
                         return presenter;
                     };
@@ -91,7 +82,7 @@ namespace GUI
             {
                 // Register order View/Presenter keyed with PresenterType.Order
                 builder.RegisterType<OrderView>().As<IOrderView>();
-                builder.RegisterType<OrderPresenter>().As<IPresenter>().Keyed<IPresenter>(Key.Order);
+                builder.RegisterType<OrderPresenter>().As<IPresenter>().Keyed<IPresenter>(Key.Order).WithParameter(ResolvedParameter.ForKeyed<IStagePresenter>(Key.MainStage));
                 // Register IPresenter factory which returns IPresenter keyed with PresenterType.Order
                 builder.Register<Func<IPresenter>>(context =>
                 {
@@ -103,13 +94,13 @@ namespace GUI
             // Item
             {
                 // Register item View/Presenter
-                builder.RegisterType<ItemPresenter>();
                 builder.RegisterType<ItemView>().As<IItemView>();
+                builder.RegisterType<ItemPresenter>().As<IPresenter>().Keyed<IPresenter>(Key.Item).WithParameter(ResolvedParameter.ForKeyed<IStagePresenter>(Key.MainStage));
                 // Register ItemPresenter factory
-                builder.Register<Func<IReadOnlyList<Item>, ItemPresenter>>(context =>
+                builder.Register<Func<IReadOnlyList<Item>, Action, IPresenter>>(context =>
                 {
                     var cc = context.Resolve<IComponentContext>();
-                    return items => cc.Resolve<ItemPresenter>(TypedParameter.From(items));
+                    return (items, action) => cc.ResolveKeyed<IPresenter>(Key.Item, TypedParameter.From(items), TypedParameter.From(action));
                 });
             }
 
@@ -117,26 +108,26 @@ namespace GUI
             {
                 // Register login View/Presenter keyed with PresenterType.Login
                 builder.RegisterType<LoginView>().As<ILoginView>();
-                builder.RegisterType<LoginPresenter>().As<IPresenter>().Keyed<IPresenter>(Key.Login);
+                builder.RegisterType<LoginPresenter>().As<IPresenter>().Keyed<IPresenter>(Key.Login).WithParameter(ResolvedParameter.ForKeyed<IStagePresenter>(Key.ChildStage));
                 // Register IPresenter factory which returns IPresenter keyed with PresenterType.Login
-                builder.Register<Func<IPresenter>>(context =>
+                builder.Register<Func<Action, IPresenter>>(context =>
                 {
                     var cc = context.Resolve<IComponentContext>();
-                    return () => cc.ResolveKeyed<IPresenter>(Key.Login);
-                }).Keyed<Func<IPresenter>>(Key.Login);
+                    return action => cc.ResolveKeyed<IPresenter>(Key.Login, TypedParameter.From(action));
+                }).Keyed<Func<Action, IPresenter>>(Key.Login);
             }
 
             // Register
             {
                 // Register register View/Presenter keyed with PresenterType.Register
                 builder.RegisterType<RegisterView>().As<IRegisterView>();
-                builder.RegisterType<RegisterPresenter>().As<IPresenter>().Keyed<IPresenter>(Key.Register);
+                builder.RegisterType<RegisterPresenter>().As<IPresenter>().Keyed<IPresenter>(Key.Register).WithParameter(ResolvedParameter.ForKeyed<IStagePresenter>(Key.ChildStage));
                 // Register IPresenter factory which returns IPresenter keyed with PresenterType.Register
-                builder.Register<Func<IPresenter>>(context =>
+                builder.Register<Func<Action, IPresenter>>(context =>
                 {
                     var cc = context.Resolve<IComponentContext>();
-                    return () => cc.ResolveKeyed<IPresenter>(Key.Register);
-                }).Keyed<Func<IPresenter>>(Key.Register);
+                    return action => cc.ResolveKeyed<IPresenter>(Key.Register, TypedParameter.From(action));
+                }).Keyed<Func<Action, IPresenter>>(Key.Register);
             }
 
             // Mappers
@@ -172,21 +163,13 @@ namespace GUI
                         var cc = context.Resolve<IComponentContext>();
                         return (countType, mode) =>
                         {
-                            Func<Order, int> func = null;
-                            switch(countType)
+                            int getItemCountProperty(Order order) => countType switch
                             {
-                                case nameof(Order.TotalCount):
-                                    func = (order) => order.TotalCount;
-                                    break;
-                                case nameof(Order.UniqueCount):
-                                    func = (order) => order.UniqueCount;
-                                    break;
-                            }
-                            if (func != null)
-                            {
-                                return cc.ResolveKeyed<IMinMaxFilterModeStrategy<Order>>(mode, TypedParameter.From(func));
-                            }
-                            return null;
+                                nameof(Order.TotalCount) => order.TotalCount,
+                                nameof(Order.UniqueCount) => order.UniqueCount,
+                                _ => default
+                            };
+                            return cc.ResolveKeyed<IMinMaxFilterModeStrategy<Order>>(mode, TypedParameter.From<Func<Order, int>>(getItemCountProperty));
                         };
                     });
 
@@ -202,8 +185,6 @@ namespace GUI
 
                 // Strict/Loose filter strategies
                 {
-                    // maybe try .RegisterGeneric
-
                     builder.RegisterType<OrderSearchFilterStrictStrategy>().As<IStrictLooseFilterModeStrategy<Order>>().Keyed<IStrictLooseFilterModeStrategy<Order>>(StrictLooseFilterMode.Strict);
                     builder.RegisterType<OrderSearchFilterLooseStrategy>().As<IStrictLooseFilterModeStrategy<Order>>().Keyed<IStrictLooseFilterModeStrategy<Order>>(StrictLooseFilterMode.Loose);
 
@@ -212,21 +193,13 @@ namespace GUI
                         var cc = context.Resolve<IComponentContext>();
                         return (searchType, mode) =>
                         {
-                            Func<Order, string> func = null;
-                            switch (searchType)
+                            string getOrderProperty(Order order) => searchType switch
                             {
-                                case nameof(Order.Id):
-                                    func = (order) => order.Id.ToString();
-                                    break;
-                                case nameof(Order.BuyerName):
-                                    func = (order) => order.BuyerName;
-                                    break;
-                            }
-                            if (func != null)
-                            {
-                                return cc.ResolveKeyed<IStrictLooseFilterModeStrategy<Order>>(mode, TypedParameter.From(func));
-                            }
-                            return null;
+                                nameof(Order.Id) => order.Id.ToString(),
+                                nameof(Order.BuyerName) => order.BuyerName,
+                                _ => default
+                            };
+                            return cc.ResolveKeyed<IStrictLooseFilterModeStrategy<Order>>(mode, TypedParameter.From<Func<Order, string>>(getOrderProperty));
                         };
                     });
 
@@ -238,20 +211,17 @@ namespace GUI
                           var cc = context.Resolve<IComponentContext>();
                           return (searchType, mode) =>
                           {
-                              Func<ItemVm, string> func = (item) => searchType switch
+                              string getItemProperty(ItemVm item) => searchType switch
                               {
                                   nameof(ItemVm.Number) => item.Number,
                                   nameof(ItemVm.InventoryId) => item.InventoryId.ToString(),
                                   nameof(ItemVm.Name) => item.Name,
                                   nameof(ItemVm.CategoryId) => item.CategoryId.ToString(),
-                                  _ => null
+                                  _ => default
                               };
-                              if (func is null) return null;
-
-                              return cc.ResolveKeyed<IStrictLooseFilterModeStrategy<ItemVm>>(mode, TypedParameter.From(func));
+                              return cc.ResolveKeyed<IStrictLooseFilterModeStrategy<ItemVm>>(mode, TypedParameter.From<Func<ItemVm, string>>(getItemProperty));
                           };
                       });
-
                 }
             }
         }
