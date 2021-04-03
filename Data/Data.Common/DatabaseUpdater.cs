@@ -11,6 +11,7 @@ namespace Data.Common
     {
         private readonly IDapperWrapper _dapperWrapper;
         private readonly IOrderRepository _orderRepository;
+
         public DatabaseUpdater(IDapperWrapper dapperWrapper, IOrderRepository orderRepository)
         {
             _dapperWrapper = dapperWrapper;
@@ -18,7 +19,7 @@ namespace Data.Common
         }
 
         public async Task<(int count, IAsyncEnumerable<Task> tasks)> UpdateDatabase()
-        {   
+        {
             var orders = (await _orderRepository.GetOrders()).ToList();
             var tasks = ReplaceOrdersAndItems(orders);
             return (orders.Count, tasks);

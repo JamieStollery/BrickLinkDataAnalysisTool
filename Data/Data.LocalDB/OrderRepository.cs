@@ -15,13 +15,13 @@ namespace Data.LocalDB
             _dapperWrapper = dapperWrapper;
         }
 
-        public async Task<IEnumerable<OrderDto>> GetOrders()
+        public Task<IEnumerable<OrderDto>> GetOrders()
         {
             var sql = @"SELECT * FROM Orders AS o
                         INNER JOIN Payments AS p ON o.Order_id = p.Order_id
                         INNER JOIN Costs AS c ON o.Order_id = c.Order_id";
 
-            return await _dapperWrapper.QueryAsync<OrderDto, PaymentDto, CostDto, OrderDto>(sql,
+            return _dapperWrapper.QueryAsync<OrderDto, PaymentDto, CostDto, OrderDto>(sql,
                 (order, payment, cost) =>
                 {
                     order.Payment = payment;

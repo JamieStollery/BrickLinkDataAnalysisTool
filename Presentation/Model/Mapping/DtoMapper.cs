@@ -28,7 +28,7 @@ namespace Presentation.Model.Mapping
                     .ForCtorParam("status", opt => opt.MapFrom(kvp => Enum.Parse(typeof(OrderStatus), kvp.Key.Status, true)))
                     .ForCtorParam("payment", opt => opt.MapFrom((kvp, ctx) => ctx.Mapper.Map<Payment>(kvp.Key.Payment)))
                     .ForCtorParam("cost", opt => opt.MapFrom((kvp, ctx) => ctx.Mapper.Map<Cost>(kvp.Key.Cost)))
-                    .ForCtorParam("items", opt => opt.MapFrom((kvp, ctx) => kvp.Value.Select(dto => ctx.Mapper.Map<Item>(dto)).ToList()));
+                    .ForCtorParam("items", opt => opt.MapFrom((kvp, ctx) => kvp.Value?.Select(dto => ctx.Mapper.Map<Item>(dto))?.ToList()));
 
                 cfg.CreateMap<Order, OrderDto>()
                     .ForMember(dto => dto.Order_id, opt => opt.MapFrom(src => src.Id))

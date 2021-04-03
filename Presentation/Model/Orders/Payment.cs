@@ -1,8 +1,10 @@
-﻿namespace Presentation.Model.Orders
+﻿using System;
+
+namespace Presentation.Model.Orders
 {
     public class Payment
     {
-        public Payment(string method, PaymentStatus status, string datePaid, string currencyCode)
+        public Payment(string method, PaymentStatus status, DateTime datePaid, string currencyCode)
         {
             Method = method;
             Status = status;
@@ -11,7 +13,7 @@
         }
         public string Method { get; }
         public PaymentStatus Status { get; }
-        public string DatePaid { get; }
+        public DateTime DatePaid { get; }
         public string CurrencyCode { get; }
     }
 }

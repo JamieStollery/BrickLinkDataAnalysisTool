@@ -1,9 +1,11 @@
-﻿namespace Data.Common.Model.Dto
+﻿using System;
+
+namespace Data.Common.Model.Dto
 {
     public class OrderDto
     {
         public int Order_id { get; set; }
-        public string Date_ordered { get; set; }
+        public DateTime Date_ordered { get; set; }
         public string Seller_name { get; set; }
         public string Store_name { get; set; }
         public string Buyer_name { get; set; }

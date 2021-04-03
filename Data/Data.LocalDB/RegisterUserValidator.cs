@@ -2,7 +2,6 @@
 using Data.Common.Model;
 using FluentValidation;
 using Newtonsoft.Json.Linq;
-using System;
 using System.IO;
 using System.Text;
 
@@ -10,7 +9,7 @@ namespace Data.LocalDB
 {
     public class RegisterUserValidator : AbstractValidator<User>
     {
-        public RegisterUserValidator(IDapperWrapper dapperWrapper, Func<User, IBrickLinkRequestFactory> requestFactoryFactory)
+        public RegisterUserValidator(IDapperWrapper dapperWrapper, IBrickLinkRequestFactory requestFactory)
         {
             CascadeMode = CascadeMode.Stop;
 
@@ -42,12 +41,10 @@ namespace Data.LocalDB
             RuleFor(user => user)
                 .MustAsync(async (user, cancellation) =>
                 {
-                    var request = requestFactoryFactory(user).Create("orders");
-
-                    var response = await request.GetResponseAsync();
+                    var response = await requestFactory.GetResponse("orders", user);
                     
                     JObject json = null;
-                    using (var stream = response.GetResponseStream())
+                    using (var stream = await response.Content.ReadAsStreamAsync())
                     {
                         var reader = new StreamReader(stream, Encoding.UTF8);
                         string jsonString = reader.ReadToEnd();

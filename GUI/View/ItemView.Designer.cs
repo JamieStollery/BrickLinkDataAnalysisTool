@@ -137,6 +137,7 @@
             // 
             // clbItemTypes
             // 
+            this.clbItemTypes.CheckOnClick = true;
             this.clbItemTypes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.clbItemTypes.FormattingEnabled = true;
             this.clbItemTypes.Location = new System.Drawing.Point(3, 19);

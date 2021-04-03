@@ -1,33 +1,32 @@
 ﻿using Data.Common;
 using Data.Common.Model;
+using Data.Common.Option;
+using Data.LocalDB;
 using Presentation.View.Interface;
 using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Presentation.Presenter.Stage
 {
     public class MainStagePresenter : StagePresenterBase
     {
         private readonly IMainStageView _view;
-        private readonly User _user;
-        private readonly Func<ChildStageViewType, ChildStagePresenter> _stagePresenterFactory;
+        private readonly IOption<User> _userOption;
+        private readonly IOption<DataMode> _dataModeOption;
+        private readonly Func<ChildStageViewType, IStagePresenter> _stagePresenterFactory;
         private readonly Func<IPresenter> _orderPresenterFactory;
         private readonly IDatabaseUpdater _databaseUpdater;
+        private readonly IDatabaseInitializer _databaseInitializer; 
 
-        public MainStagePresenter(IMainStageView view, User user, Func<ChildStageViewType, ChildStagePresenter> stagePresenterFactory, Func<IPresenter> orderPresenterFactory, IDatabaseUpdater databaseUpdater) : base(view)
+        public MainStagePresenter(IMainStageView view, Func<ChildStageViewType, Action, IStagePresenter> stagePresenterFactory, Func<IPresenter> orderPresenterFactory,
+            IDatabaseUpdater databaseUpdater, IDatabaseInitializer databaseInitializer, IOption<DataMode> dataModeOption, IOption<User> userOption) : base(view)
         {
             _view = view;
-            _user = user;
-            _stagePresenterFactory = (viewType) =>
-            {
-                var childStagePresenter = stagePresenterFactory(viewType);
-                childStagePresenter.OnStageClosed = UpdateStage;
-                return childStagePresenter;
-            };
+            _stagePresenterFactory = (viewType) => stagePresenterFactory(viewType, UpdateStage);
             _orderPresenterFactory = orderPresenterFactory;
             _databaseUpdater = databaseUpdater;
+            _databaseInitializer = databaseInitializer;
+            _dataModeOption = dataModeOption;
+            _userOption = userOption;
 
             _view.OnLogoutClick = Logout;
             _view.OnLoginClick = OpenLoginView;
@@ -35,11 +34,7 @@ namespace Presentation.Presenter.Stage
             _view.OnChangeDataModeClick = ChangeDataMode;
             _view.OnUpdateDatabaseClick = UpdateDatabase;
             _view.OnClearDatabaseClick = ClearDatabase;
-
-            DataMode = DataMode.Database;
         }
-
-        public DataMode DataMode { get; private set; }
 
         public void OpenLoginView() => _stagePresenterFactory(ChildStageViewType.Login).OpenStage();
 
@@ -47,32 +42,35 @@ namespace Presentation.Presenter.Stage
 
         public void OpenOrderView() => _orderPresenterFactory().OpenView();
 
-        protected override void InitializeStage()
+        protected override async void InitializeStage()
         {
-            //OpenLoginView();
-            _user.Username = "JamieStollery";
-            _user.Password = "test";
-            _user.ConsumerKey = "F79394C3989A4A35A94B4ECC82B1B08C";
-            _user.ConsumerSecret = "AD2C9F5A38584B68A38F2EEE7AF35E62";
-            _user.TokenValue = "594B505FC34B427EBB22AE05843C969E";
-            _user.TokenSecret = "CD49808C7FC442AF8EB303317ADABDAF";
+            await _databaseInitializer.CreateTables();
 
-            UpdateStage();
+            if (_userOption.Value is null)
+            {
+                OpenLoginView();
+            }
+            else
+            {
+                UpdateStage();
+            }
         }
 
         private void UpdateControls()
         {
-            _view.Username = _user.Username;
-            _view.DataMode = DataMode.ToString();
-            _view.DatabaseControlsEnabled = _user.IsLoggedIn;
-            _view.LogoutEnabled = _user.IsLoggedIn;
-            _view.LoginEnabled = !_user.IsLoggedIn;
-            _view.RegisterEnabled = !_user.IsLoggedIn;
+            _view.Username = _userOption.Value?.Username;
+            _view.DataMode = _dataModeOption.Value.ToString();
+            _view.DatabaseControlsEnabled = !(_userOption.Value is null);
+            _view.LogoutEnabled = !(_userOption.Value is null);
+            _view.LoginEnabled = _userOption.Value is null;
+            _view.RegisterEnabled = _userOption.Value is null;
         }
 
         private void Logout()
         {
-            _user.Invalidate();
+            _userOption.ResetValue();
+            _dataModeOption.ResetValue();
+
             UpdateControls();
             CloseCurrentView();
         }
@@ -80,21 +78,21 @@ namespace Presentation.Presenter.Stage
         private void UpdateStage()
         {
             UpdateControls();
-            if (_user.IsLoggedIn) OpenOrderView();
+            if (!(_userOption.Value is null))
+            {
+                OpenOrderView();
+            }
         }
 
         private void ChangeDataMode()
         {
-            switch (DataMode)
+            _dataModeOption.Value = _dataModeOption.Value switch
             {
-                case DataMode.Database:
-                    DataMode = DataMode.API;
-                    break;
-                case DataMode.API:
-                    DataMode = DataMode.Database;
-                    break;
-            }
-            _view.DataMode = DataMode.ToString();
+                DataMode.Database => DataMode.API,
+                DataMode.API => DataMode.Database,
+                _ => throw new ArgumentException()
+            };
+            _view.DataMode = _dataModeOption.Value.ToString();
         }
 
         private async void UpdateDatabase()
@@ -111,9 +109,9 @@ namespace Presentation.Presenter.Stage
             _view.Status = string.Empty;
         }
 
-        private void ClearDatabase()
+        private async void ClearDatabase()
         {
-
+            await _databaseUpdater.ClearDatabase();
         }
     }
 }
