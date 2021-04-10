@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Presentation.Model.Items;
 
 namespace Presentation.Model.Orders
 {
     public class Order
     {
-        public Order(int id, string dateOrdered, string sellerName, string storeName, string buyerName, int totalCount, int uniqueCount, OrderStatus status, Payment payment, Cost cost, IReadOnlyList<Item> items)
+        public Order(int id, DateTime dateOrdered, string sellerName, string storeName, string buyerName, int totalCount, int uniqueCount, OrderStatus status, Payment payment, Cost cost, IReadOnlyList<Item> items)
         {
             Id = id;
             DateOrdered = dateOrdered;
@@ -21,7 +22,7 @@ namespace Presentation.Model.Orders
         }
 
         public int Id { get; }
-        public string DateOrdered { get; }
+        public DateTime DateOrdered { get; }
         public string SellerName { get; }
         public string StoreName { get; }
         public string BuyerName { get; }

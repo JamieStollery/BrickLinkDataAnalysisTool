@@ -22,17 +22,19 @@ namespace Presentation.Presenter
         private readonly IStagePresenter _stagePresenter;
         private readonly Func<IReadOnlyList<Item>, IPresenter> _itemPresenterFactory;
         private readonly IDtoMapper _dtoMapper;
+        private readonly IVmMapper _vmMapper;
         private readonly IOrderFilterer _orderFilterer;
         private IReadOnlyList<Order> _orders;
 
         public OrderPresenter(IOrderView orderView, Func<IOrderRepository> repositoryFactory, IStagePresenter stagePresenter, 
-            Func<IReadOnlyList<Item>, Action, IPresenter> itemPresenterFactory, IDtoMapper dtoMapper, IOrderFilterer orderFilterer)
+            Func<IReadOnlyList<Item>, Action, IPresenter> itemPresenterFactory, IDtoMapper dtoMapper, IVmMapper vmMapper, IOrderFilterer orderFilterer)
         {
             _orderView = orderView;
             _repositoryFactory = repositoryFactory;
             _stagePresenter = stagePresenter;
             _itemPresenterFactory = (items) => itemPresenterFactory(items, OpenView);
             _dtoMapper = dtoMapper;
+            _vmMapper = vmMapper;
             _orderFilterer = orderFilterer;
 
             _orderView.OnSearchButtonClick = Search;
@@ -82,7 +84,7 @@ namespace Presentation.Presenter
             filteredOrders = _orderFilterer.FilterByItemCount(filteredOrders, _orderView.ItemCount, _orderView.ItemCountType, EnumUtils.ToNullableEnum<MinMaxFilterMode>(_orderView.ItemCountTypeFilterMode));
             filteredOrders = _orderFilterer.FilterByOrderSearch(filteredOrders, _orderView.OrderSearchValue, _orderView.OrderSearchType, EnumUtils.ToNullableEnum<StrictLooseFilterMode>(_orderView.OrderSearchFilterMode));
 
-            _orderView.Orders = filteredOrders;
+            _orderView.Orders = filteredOrders.Select(order => _vmMapper.Map(order)).ToList();
         }
     }
 }

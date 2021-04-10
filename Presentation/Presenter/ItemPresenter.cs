@@ -45,8 +45,7 @@ namespace Presentation.Presenter
             {
                 nameof(ItemVm.Number),
                 nameof(ItemVm.InventoryId),
-                nameof(ItemVm.Name),
-                nameof(ItemVm.CategoryId)
+                nameof(ItemVm.Name)
             };
             _view.ItemTypes = Enum.GetNames(typeof(ItemType));
             var itemConditions = new List<string>() { "Any" };

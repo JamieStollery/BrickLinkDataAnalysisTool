@@ -216,7 +216,6 @@ namespace GUI
                                   nameof(ItemVm.Number) => item.Number,
                                   nameof(ItemVm.InventoryId) => item.InventoryId.ToString(),
                                   nameof(ItemVm.Name) => item.Name,
-                                  nameof(ItemVm.CategoryId) => item.CategoryId.ToString(),
                                   _ => default
                               };
                               return cc.ResolveKeyed<IStrictLooseFilterModeStrategy<ItemVm>>(mode, TypedParameter.From<Func<ItemVm, string>>(getItemProperty));
