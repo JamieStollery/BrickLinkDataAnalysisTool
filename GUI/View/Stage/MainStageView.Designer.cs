@@ -209,8 +209,7 @@
             // 
             this.lblTaskLabel.ForeColor = System.Drawing.Color.Silver;
             this.lblTaskLabel.Name = "lblTaskLabel";
-            this.lblTaskLabel.Size = new System.Drawing.Size(141, 17);
-            this.lblTaskLabel.Text = "toolStripStatusLabel1";
+            this.lblTaskLabel.Size = new System.Drawing.Size(0, 17);
             // 
             // MainStageView
             // 
