@@ -39,14 +39,9 @@ namespace Data.BrickLinkAPI
             }
 
             var meta = json.SelectToken("meta");
-            if (meta.Value<int>("code") == 200)
-            {
-                return json.SelectToken("data").Select(token => token.ToObject<OrderDto>());
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            return meta?.Value<int>("code") == 200 ?
+                json.SelectToken("data").Select(token => token.ToObject<OrderDto>()) :
+                null;
         }
 
         public async Task<IEnumerable<OrderItemDto>> GetItems(int orderId)
@@ -64,15 +59,9 @@ namespace Data.BrickLinkAPI
             }
 
             var meta = json.SelectToken("meta");
-            if (meta.Value<int>("code") == 200)
-            {
-                return json.SelectToken("data").SelectMany(token => token.Select(token => token.ToObject<OrderItemDto>()));
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
+            return meta?.Value<int>("code") == 200 ?
+                json.SelectToken("data").SelectMany(token => token.Select(token => token.ToObject<OrderItemDto>())) :
+                null;
         }
-
     }
 }

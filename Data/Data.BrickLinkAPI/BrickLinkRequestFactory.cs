@@ -11,8 +11,10 @@ namespace Data.BrickLinkAPI
 
         public HttpWebRequest Create(string url, User user)
         {
-            var client = OAuthRequest.ForProtectedResource("GET", user.ConsumerKey, user.ConsumerSecret, user.TokenValue, user.TokenSecret);
+            var client = OAuthRequest.ForProtectedResource("GET", 
+                user.ConsumerKey, user.ConsumerSecret, user.TokenValue, user.TokenSecret);
             client.RequestUrl = URL_PREFIX + url;
+
             var request = (HttpWebRequest)WebRequest.Create(client.RequestUrl);
             request.Headers.Add("Authorization", client.GetAuthorizationHeader());
             return request;

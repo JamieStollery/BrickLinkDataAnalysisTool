@@ -16,7 +16,7 @@ namespace Test.Data.Common
 
         public DatabaseUpdaterTests()
         {
-            // Define IDapperMapper Mock
+            // Define IDapperWapper Mock
             _dapperWrapperMock = new Mock<IDapperWrapper>();
             // Setup ExecuteAsync method
             _dapperWrapperMock.Setup(mock => mock.ExecuteAsync(It.IsAny<string>(), It.IsAny<object>())).ReturnsAsync(default(int));
