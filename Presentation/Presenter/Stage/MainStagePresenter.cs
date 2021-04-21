@@ -33,7 +33,7 @@ namespace Presentation.Presenter.Stage
             _view.OnClearDatabaseClick = ClearDatabase;
 
             _userOption.Value = new User()
-            { 
+            {
                 Username = "JamieStollery",
                 Password = "test",
                 ConsumerKey = "F79394C3989A4A35A94B4ECC82B1B08C",
@@ -49,7 +49,17 @@ namespace Presentation.Presenter.Stage
 
         public void OpenOrderView() => _orderPresenterFactory().OpenView();
 
-        protected override void InitializeStage() => OpenLoginView();
+        protected override void InitializeStage()
+        {
+            if (_userOption.Value is null)
+            {
+                OpenLoginView();
+            }
+            else
+            {
+                UpdateStage();
+            }
+        }
 
         private void UpdateControls()
         {
@@ -73,7 +83,10 @@ namespace Presentation.Presenter.Stage
         private void UpdateStage()
         {
             UpdateControls();
-            if (!(_userOption.Value is null)) OpenOrderView();
+            if (!(_userOption.Value is null))
+            {
+                OpenOrderView();
+            }
         }
 
         private void ChangeDataMode()
