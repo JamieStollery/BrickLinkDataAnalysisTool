@@ -2,6 +2,7 @@
 using Data.Common;
 using Data.Common.Model.Dto;
 using Data.Common.Repository.Interface;
+using Data.LocalDB;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,11 @@ namespace Test.Integration
         // Runs before test to populate database
         public async Task InitializeAsync()
         {
+            // Create database tables
+            var databaseInitializer = _scope.Resolve<IDatabaseInitializer>();
+            await databaseInitializer.CreateTables();
+
+            // Populate database
             var databaseUpdater = _scope.Resolve<IDatabaseUpdater>();
             var (_, tasks) = await databaseUpdater.UpdateDatabase();
             await tasks.ToListAsync();
@@ -46,6 +52,7 @@ namespace Test.Integration
         // Runs after test to clear database
         public async Task DisposeAsync()
         {
+            // Clear database
             var databaseUpdater = _scope.Resolve<IDatabaseUpdater>();
             await databaseUpdater.ClearDatabase();
             _scope.Dispose();

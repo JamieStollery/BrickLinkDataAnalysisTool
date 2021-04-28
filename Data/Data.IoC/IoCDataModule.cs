@@ -14,7 +14,7 @@ using System.IO;
 
 namespace Data.IoC
 {
-    public class IoCDataModule : Module
+    public partial class IoCDataModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
@@ -23,7 +23,7 @@ namespace Data.IoC
 
             var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var usersConnectionString = $"Data Source={Path.Combine(folderPath, "Users.db3")};Version=3;";
-            var ordersConnectionString = $"Data Source={Path.Combine(folderPath, "Demo.db3")};Version=3;";
+            var ordersConnectionString = $"Data Source={Path.Combine(folderPath, "Orders.db3")};Version=3;";
 
             builder.RegisterInstance<IDbConnection>(new SQLiteConnection(usersConnectionString)).Keyed<IDbConnection>(Database.Users).SingleInstance();
             builder.RegisterInstance<IDbConnection>(new SQLiteConnection(ordersConnectionString)).Keyed<IDbConnection>(Database.Orders).SingleInstance();
@@ -80,12 +80,12 @@ namespace Data.IoC
                     ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Orders),
                     ResolvedParameter.ForKeyed<IOrderRepository>(DataMode.API)
                 }).InstancePerLifetimeScope();
-        }
 
-        private enum Database
-        {
-            Users,
-            Orders
+            builder.RegisterType<OrdersDatabaseInitializer>().As<IDatabaseInitializer>().Keyed<IDatabaseInitializer>(Database.Orders)
+                .WithParameter(ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Orders)).InstancePerLifetimeScope();
+
+            builder.RegisterType<UsersDatabaseInitializer>().As<IDatabaseInitializer>().Keyed<IDatabaseInitializer>(Database.Users)
+                .WithParameter(ResolvedParameter.ForKeyed<IDapperWrapper>(Database.Users)).InstancePerLifetimeScope();
         }
 
         private enum Validator

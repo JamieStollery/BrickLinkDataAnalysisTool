@@ -1,4 +1,5 @@
-﻿using Presentation.View.Interface;
+﻿using Data.LocalDB;
+using Presentation.View.Interface;
 using System;
 
 namespace Presentation.Presenter.Stage
@@ -7,11 +8,15 @@ namespace Presentation.Presenter.Stage
     {
         private readonly Func<Action, IPresenter> _loginPresenterFactory;
         private readonly Func<Action, IPresenter> _registerPresenterFactory;
+        private readonly IDatabaseInitializer _databaseInitializer; 
 
-        public ChildStagePresenter(IStageView view, Func<Action, IPresenter> loginPresenterFactory, Func<Action, IPresenter> registerPresenterFactory, Action updateMainStage) : base(view)
+        public ChildStagePresenter(IStageView view, Func<Action, IPresenter> loginPresenterFactory, Func<Action, IPresenter> registerPresenterFactory,
+            IDatabaseInitializer databaseInitializer, Action updateMainStage) : base(view)
         {
             _loginPresenterFactory = loginPresenterFactory;
             _registerPresenterFactory = registerPresenterFactory;
+            _databaseInitializer = databaseInitializer;
+
             view.OnStageClosed = updateMainStage;
         }
 
@@ -21,8 +26,10 @@ namespace Presentation.Presenter.Stage
 
         public void OpenRegisterView() => _registerPresenterFactory(OpenLoginView).OpenView();
 
-        protected override void InitializeStage()
+        protected override async void InitializeStage()
         {
+            await _databaseInitializer.CreateTables();
+
             switch (InitialView)
             {
                 case ChildStageViewType.Login:

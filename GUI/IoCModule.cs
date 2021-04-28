@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Core;
 using Data.IoC;
+using Data.LocalDB;
 using GUI.View;
 using GUI.View.Stage;
 using Presentation;
@@ -37,7 +38,9 @@ namespace GUI
                         // Resolve IStageView keyed with Key.Main
                         ResolvedParameter.ForKeyed<IMainStageView>(Key.MainStage),
                         // Resolve IPresenter factory keyed with PresenterType.Order
-                        ResolvedParameter.ForKeyed<Func<IPresenter>>(Key.Order)
+                        ResolvedParameter.ForKeyed<Func<IPresenter>>(Key.Order),
+                        // Resolve IDatabaseInitializer keyed with Database.Orders
+                        ResolvedParameter.ForKeyed<IDatabaseInitializer>(Database.Orders)
                     }).InstancePerLifetimeScope();
                 // Register ToolStripRenderer for MainStageView
                 builder.RegisterInstance(new ToolStripProfessionalRenderer(new MenuColorTable())).As<ToolStripRenderer>();
@@ -63,7 +66,9 @@ namespace GUI
                         new ResolvedParameter(
                             (pi, ctx) => pi.ParameterType == typeof(Func<Action, IPresenter>) && pi.Name == "registerPresenterFactory",
                             (pi, ctx) => ctx.ResolveKeyed<Func<Action, IPresenter>>(Key.Register)
-                        )
+                        ),
+                        // Resolve IDatabaseInitializer keyed with Database.Orders
+                        ResolvedParameter.ForKeyed<IDatabaseInitializer>(Database.Users)
                     }).InstancePerLifetimeScope();
                 // Register an IStagePresenter factory that returns a child stage Presenter with the InitialView property set
                 builder.Register<Func<ChildStageViewType, Action, IStagePresenter>>(context =>

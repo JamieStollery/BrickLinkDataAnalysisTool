@@ -1,6 +1,7 @@
 ﻿using Data.Common;
 using Data.Common.Model;
 using Data.Common.Option;
+using Data.LocalDB;
 using Presentation.View.Interface;
 using System;
 
@@ -14,14 +15,16 @@ namespace Presentation.Presenter.Stage
         private readonly Func<ChildStageViewType, IStagePresenter> _stagePresenterFactory;
         private readonly Func<IPresenter> _orderPresenterFactory;
         private readonly IDatabaseUpdater _databaseUpdater;
+        private readonly IDatabaseInitializer _databaseInitializer; 
 
         public MainStagePresenter(IMainStageView view, Func<ChildStageViewType, Action, IStagePresenter> stagePresenterFactory, Func<IPresenter> orderPresenterFactory,
-            IDatabaseUpdater databaseUpdater, IOption<DataMode> dataModeOption, IOption<User> userOption) : base(view)
+            IDatabaseUpdater databaseUpdater, IDatabaseInitializer databaseInitializer, IOption<DataMode> dataModeOption, IOption<User> userOption) : base(view)
         {
             _view = view;
             _stagePresenterFactory = (viewType) => stagePresenterFactory(viewType, UpdateStage);
             _orderPresenterFactory = orderPresenterFactory;
             _databaseUpdater = databaseUpdater;
+            _databaseInitializer = databaseInitializer;
             _dataModeOption = dataModeOption;
             _userOption = userOption;
 
@@ -31,16 +34,6 @@ namespace Presentation.Presenter.Stage
             _view.OnChangeDataModeClick = ChangeDataMode;
             _view.OnUpdateDatabaseClick = UpdateDatabase;
             _view.OnClearDatabaseClick = ClearDatabase;
-
-            _userOption.Value = new User()
-            {
-                Username = "ExistingUser",
-                Password = "test",
-                ConsumerKey = "F79394C3989A4A35A94B4ECC82B1B08C",
-                ConsumerSecret = "AD2C9F5A38584B68A38F2EEE7AF35E62",
-                TokenValue = "594B505FC34B427EBB22AE05843C969E",
-                TokenSecret = "CD49808C7FC442AF8EB303317ADABDAF"
-            };
         }
 
         public void OpenLoginView() => _stagePresenterFactory(ChildStageViewType.Login).OpenStage();
@@ -49,8 +42,10 @@ namespace Presentation.Presenter.Stage
 
         public void OpenOrderView() => _orderPresenterFactory().OpenView();
 
-        protected override void InitializeStage()
+        protected override async void InitializeStage()
         {
+            await _databaseInitializer.CreateTables();
+
             if (_userOption.Value is null)
             {
                 OpenLoginView();
