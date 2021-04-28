@@ -66,12 +66,12 @@ namespace GUI
                         )
                     }).InstancePerLifetimeScope();
                 // Register an IStagePresenter factory that returns a child stage Presenter with the InitialView property set
-                builder.Register<Func<ChildStageViewType, Action, ChildStagePresenter>>(context =>
+                builder.Register<Func<ChildStageViewType, Action, IStagePresenter>>(context =>
                 {
                     var cc = context.Resolve<IComponentContext>();
                     return (initialView, action) =>
                     {
-                        var presenter = cc.Resolve<ChildStagePresenter>(TypedParameter.From(action));
+                        var presenter = cc.ResolveKeyed<IStagePresenter>(Key.ChildStage, TypedParameter.From(action)) as ChildStagePresenter;
                         presenter.InitialView = initialView;
                         return presenter;
                     };

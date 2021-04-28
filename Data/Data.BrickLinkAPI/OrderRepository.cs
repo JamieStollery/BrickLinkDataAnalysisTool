@@ -26,41 +26,37 @@ namespace Data.BrickLinkAPI
 
         public async Task<IEnumerable<OrderDto>> GetOrders()
         {
-            var request = _requestFactory.Create("orders?status=-purged", _userOption.Value);
-
-            var response = await request.GetResponseAsync();
+            var response = await _requestFactory.GetResponse("orders?status=-purged", _userOption.Value);
 
             JObject json = null;
-            using (var stream = response.GetResponseStream())
+            using (var stream = await response.Content.ReadAsStreamAsync())
             {
                 var reader = new StreamReader(stream, Encoding.UTF8);
                 string jsonString = reader.ReadToEnd();
-                json = JObject.Parse(jsonString);
+                json = !string.IsNullOrEmpty(jsonString) ? JObject.Parse(jsonString) : null;
             }
 
-            var meta = json.SelectToken("meta");
+            var meta = json?.SelectToken("meta");
             return meta?.Value<int>("code") == 200 ?
-                json.SelectToken("data").Select(token => token.ToObject<OrderDto>()) :
+                json?.SelectToken("data")?.Select(token => token.ToObject<OrderDto>()) :
                 null;
         }
 
         public async Task<IEnumerable<OrderItemDto>> GetItems(int orderId)
         {
-            var request = _requestFactory.Create($"orders/{orderId}/items", _userOption.Value);
-
-            var response = await request.GetResponseAsync();
+            var response = await _requestFactory.GetResponse($"orders/{orderId}/items", _userOption.Value);
 
             JObject json = null;
-            using (var stream = response.GetResponseStream())
+            using (var stream = await response.Content.ReadAsStreamAsync())
             {
                 var reader = new StreamReader(stream, Encoding.UTF8);
                 string jsonString = reader.ReadToEnd();
-                json = JObject.Parse(jsonString);
+                json = !string.IsNullOrEmpty(jsonString) ? JObject.Parse(jsonString) : null;
             }
 
             var meta = json.SelectToken("meta");
             return meta?.Value<int>("code") == 200 ?
-                json.SelectToken("data").SelectMany(token => token.Select(token => token.ToObject<OrderItemDto>())) :
+                json?.SelectToken("data")?.SelectMany(token => token.Select(token => token.ToObject<OrderItemDto>())) :
                 null;
         }
     }

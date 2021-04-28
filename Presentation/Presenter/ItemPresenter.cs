@@ -68,8 +68,13 @@ namespace Presentation.Presenter
         {
             var tasks = _items.Select(async item =>
             {
-                item.Image = Image.FromStream(await _repository.GetItemImage(item.Type, item.Number, item.ColorId));
-                _view.RePaintItem(item.Number, item.InventoryId);
+                try
+                {
+                    var imageStream = await _repository.GetItemImage(item.Type, item.Number, item.ColorId);
+                    item.Image = Image.FromStream(imageStream);
+                    _view.RePaintItem(item.Number, item.InventoryId);
+                }
+                catch (Exception) { }
             }).ToList();
 
             await Task.WhenAll(tasks);

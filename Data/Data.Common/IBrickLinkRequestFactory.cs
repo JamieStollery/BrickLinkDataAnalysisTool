@@ -1,10 +1,11 @@
 ﻿using Data.Common.Model;
-using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Data.Common
 {
     public interface IBrickLinkRequestFactory
     {
-        HttpWebRequest Create(string url, User user);
+        Task<HttpResponseMessage> GetResponse(string url, User user);
     }
 }

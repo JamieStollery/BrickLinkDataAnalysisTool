@@ -4,11 +4,10 @@ using Data.Common.Model.Dto;
 using Data.Common.Option;
 using Data.Common.Repository.Interface;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,55 +26,43 @@ namespace Data.BrickLinkAPI
 
         public async Task<Stream> GetItemImage(string type, string no, int colorId)
         {
-            var request = _requestFactory.Create($"items/{type}/{no}/images/{colorId}", _userOption.Value);
-
-            var response = await request.GetResponseAsync();
+            var response = await _requestFactory.GetResponse($"items/{type}/{no}/images/{colorId}", _userOption.Value);
 
             JObject json = null;
-            using (var stream = response.GetResponseStream())
+            using (var stream = await response.Content.ReadAsStreamAsync())
             {
                 var reader = new StreamReader(stream, Encoding.UTF8);
                 string jsonString = reader.ReadToEnd();
-                json = JObject.Parse(jsonString);
+                json = !string.IsNullOrEmpty(jsonString) ? JObject.Parse(jsonString) : null;
             }
             
-            var meta = json.SelectToken("meta");
-            if (meta.Value<int>("code") == 200)
+            var meta = json?.SelectToken("meta");
+            if (meta?.Value<int>("code") == 200)
             {
-                request = (HttpWebRequest)WebRequest.Create($"http:{json.SelectToken("data").Value<string>("thumbnail_url")}");
-                response = await request.GetResponseAsync();
-                return response.GetResponseStream();
-            } 
-            else
-            {
-                throw new NotImplementedException();
+                var url = json?.SelectToken("data")?.Value<string>("thumbnail_url");
+                if (!string.IsNullOrEmpty(url))
+                {
+                    var client = new HttpClient();
+                    return await client.GetStreamAsync($"http:{url}");
+                }
             }
+            return null;
         }
 
         public async Task<IEnumerable<ColorDto>> GetColors()
         {
-            var request = _requestFactory.Create("colors", _userOption.Value);
-
-            var response = await request.GetResponseAsync();
+            var response = await _requestFactory.GetResponse("colors", _userOption.Value);
 
             JObject json = null;
-            using (var stream = response.GetResponseStream())
+            using (var stream = await response.Content.ReadAsStreamAsync())
             {
                 var reader = new StreamReader(stream, Encoding.UTF8);
                 string jsonString = reader.ReadToEnd();
-                json = JObject.Parse(jsonString);
+                json = !string.IsNullOrEmpty(jsonString) ? JObject.Parse(jsonString) : null;
             }
             
-            var meta = json.SelectToken("meta");
-            if (meta.Value<int>("code") == 200)
-            {
-                return json.SelectToken("data").Select(token => token.ToObject<ColorDto>());
-            } 
-            else
-            {
-                throw new NotImplementedException();
-            }
-
+            var meta = json?.SelectToken("meta");
+            return meta?.Value<int>("code") == 200 ? json?.SelectToken("data")?.Select(token => token.ToObject<ColorDto>()) : null;
         }
     }
 }

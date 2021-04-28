@@ -41,12 +41,10 @@ namespace Data.LocalDB
             RuleFor(user => user)
                 .MustAsync(async (user, cancellation) =>
                 {
-                    var request = requestFactory.Create("orders", user);
-
-                    var response = await request.GetResponseAsync();
+                    var response = await requestFactory.GetResponse("orders", user);
                     
                     JObject json = null;
-                    using (var stream = response.GetResponseStream())
+                    using (var stream = await response.Content.ReadAsStreamAsync())
                     {
                         var reader = new StreamReader(stream, Encoding.UTF8);
                         string jsonString = reader.ReadToEnd();

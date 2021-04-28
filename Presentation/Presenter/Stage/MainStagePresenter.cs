@@ -34,7 +34,7 @@ namespace Presentation.Presenter.Stage
 
             _userOption.Value = new User()
             {
-                Username = "JamieStollery",
+                Username = "ExistingUser",
                 Password = "test",
                 ConsumerKey = "F79394C3989A4A35A94B4ECC82B1B08C",
                 ConsumerSecret = "AD2C9F5A38584B68A38F2EEE7AF35E62",
@@ -114,9 +114,9 @@ namespace Presentation.Presenter.Stage
             _view.Status = string.Empty;
         }
 
-        private void ClearDatabase()
+        private async void ClearDatabase()
         {
-
+            await _databaseUpdater.ClearDatabase();
         }
     }
 }

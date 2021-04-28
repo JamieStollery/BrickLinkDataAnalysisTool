@@ -11,6 +11,7 @@ namespace GUI.View.Stage
             InitializeComponent();
             msMenu.Renderer = toolStripRenderer;
             statusStrip1.Renderer = toolStripRenderer;
+            WindowState = FormWindowState.Maximized;
         }
 
         public Action OnStageOpened { set => Shown += (sender, e) => value(); }
@@ -53,7 +54,12 @@ namespace GUI.View.Stage
 
         public void OpenStage() => Show();
 
-        public void CloseStage() => Close();
+        public void CloseStage()
+        {
+            Close();
+            Application.Exit();
+        }
+
 
         public void AddView(IView view) => pnlViewStage.Controls.Add(view as Control);
 

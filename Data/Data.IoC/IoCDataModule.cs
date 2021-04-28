@@ -23,7 +23,7 @@ namespace Data.IoC
 
             var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             var usersConnectionString = $"Data Source={Path.Combine(folderPath, "Users.db3")};Version=3;";
-            var ordersConnectionString = $"Data Source={Path.Combine(folderPath, "Test.db3")};Version=3;";
+            var ordersConnectionString = $"Data Source={Path.Combine(folderPath, "Demo.db3")};Version=3;";
 
             builder.RegisterInstance<IDbConnection>(new SQLiteConnection(usersConnectionString)).Keyed<IDbConnection>(Database.Users).SingleInstance();
             builder.RegisterInstance<IDbConnection>(new SQLiteConnection(ordersConnectionString)).Keyed<IDbConnection>(Database.Orders).SingleInstance();
